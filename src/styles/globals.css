@@ -1,0 +1,608 @@
+@import "tailwindcss";
+
+
+/* Hide Next.js feedback button */
+[data-nextjs-dialog] {
+  display: none !important;
+}
+
+div#__next [data-nextjs-dialog] {
+  display: none !important;
+}
+
+/* Hide Next.js dev portal */
+nextjs-portal {
+  display: none !important;
+}
+
+nextjs-portal,
+[data-nextjs-dialog],
+[data-nextjs-feedback] {
+  display: none !important;
+}
+
+
+
+/* ------------------------------------- CCS From Original Project ----------------------------------------- */
+
+/* Note ->   
+  Side_Bar_Large
+  Main_Screen_Large
+  are those when toggle is true means small sidebar and large main screen ie short view
+    */
+
+    .arsenal-sc-regular {
+      font-family: "Arsenal SC", serif;
+      font-weight: 400;
+      font-style: normal;
+    }
+    
+    .arsenal-sc-bold {
+      font-family: "Arsenal SC", serif;
+      font-weight: 700;
+      font-style: normal;
+    }
+    
+    .arsenal-sc-regular-italic {
+      font-family: "Arsenal SC", serif;
+      font-weight: 400;
+      font-style: italic;
+    }
+    
+    .arsenal-sc-bold-italic {
+      font-family: "Arsenal SC", serif;
+      font-weight: 700;
+      font-style: italic;
+    }
+
+    
+.space-grotesk-setting {
+  font-family: "Space Grotesk", serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.roboto-slab-setting {
+  font-family: "Roboto Slab", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* Global CSS file or component-specific styles */
+.scrollbar-hidden {
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+  scrollbar-width: none; /* Firefox */
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none; /* WebKit-based browsers */
+}
+
+.register {
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.code {
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.chatBar {
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.CustomerTestimonialReview {
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.CustomerTestimonialReview::-webkit-scrollbar {
+  width: 3px;
+  background: #ffffff;
+  border-radius: 50%;
+}
+.CustomerTestimonialReview::-webkit-scrollbar-thumb {
+  background-color: rgb(0, 0, 0);
+  border-radius: 50px;
+  width: 2px;
+}
+.CustomerTestimonialReview::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 50px;
+  border-left: 1px solid rgba(255, 255, 255, 0.675);
+  border-right: 1px solid rgba(255, 255, 255, 0.734);
+}
+
+/* Remove spinner buttons for number input */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield; /* For Firefox */
+}
+
+/* Extra extra large devices (extra-large desktops) */
+@media only screen and (min-width: 1400px) {
+  .Side_Bar_Large {
+    width: 7vw;
+  }
+  .Main_Screen_Large {
+    width: 93vw;
+    overflow-x: scroll;
+  }
+
+  .Side_Bar_Small {
+    width: 15vw;
+    background-color: rgb(6 182 212 / var(--tw-bg-opacity, 1));
+  }
+  .Main_Screen_Small {
+    width: 85vw;
+  }
+}
+
+/* Extra large devices (large desktops and high-resolution displays) */
+@media only screen and (max-width: 1400px) and (min-width: 1200px) {
+  .Side_Bar_Large {
+    width: 7vw;
+  }
+  .Main_Screen_Large {
+    width: 93vw;
+    overflow-x: hidden;
+  }
+
+  .Side_Bar_Small {
+    width: 15vw;
+    background-color: rgb(6 182 212 / var(--tw-bg-opacity, 1));
+  }
+  .Main_Screen_Small {
+    width: 85vw;
+  }
+}
+
+/* Large devices (desktops and laptops) */
+@media only screen and (max-width: 1200px) and (min-width: 992px) {
+  /* means toggle true */
+  .Side_Bar_Large {
+    width: 7vw;
+  }
+  .Main_Screen_Large {
+    width: 93vw;
+    overflow-x: hidden;
+  }
+
+  /* means toggle false*/
+  .Side_Bar_Small {
+    width: 15vw;
+    background-color: rgb(6 182 212 / var(--tw-bg-opacity, 1));
+  }
+  .Main_Screen_Small {
+    width: 85vw;
+  }
+}
+
+/* Medium devices (tablets and small laptops) */
+@media only screen and (max-width: 992px) and (min-width: 768px) {
+  .Side_Bar_Large {
+    width: 9vw;
+  }
+  .Main_Screen_Large {
+    width: 91vw;
+    overflow-x: hidden;
+  }
+
+  .Side_Bar_Small {
+    width: 16vw;
+    background-color: rgb(6 182 212 / var(--tw-bg-opacity, 1));
+  }
+  .Main_Screen_Small {
+    width: 84vw;
+  }
+}
+
+/* Small devices (phones and small tablets) */
+@media only screen and (max-width: 768px) and (min-width: 576px) {
+  .Side_Bar_Large {
+    width: 150px;
+    position: absolute;
+    z-index: 5;
+  }
+  .Main_Screen_Large {
+    width: 100vw;
+    /* overflow-x: scroll; */
+  }
+
+  .Side_Bar_Small {
+    background-color: rgb(6 182 212 / var(--tw-bg-opacity, 1));
+    width: 0vw;
+  }
+  .Main_Screen_Small {
+    width: 100vw;
+  }
+
+  .hide_View {
+    position: absolute;
+    width: 100vw;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: #0000007a;
+    z-index: 1;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+  .Show_View {
+    display: none !important;
+  }
+
+  .hide_Component {
+    display: none;
+  }
+}
+
+/* Extra small devices (phones) */
+@media only screen and (max-width: 576px) {
+  .Side_Bar_Large {
+    width: 150px;
+    position: absolute;
+    z-index: 5;
+  }
+  .Main_Screen_Large {
+    width: 100vw;
+    /* overflow-x: scroll; */
+  }
+
+  .Side_Bar_Small {
+    background-color: rgb(6 182 212 / var(--tw-bg-opacity, 1));
+    width: 0vw;
+  }
+  .Main_Screen_Small {
+    width: 100vw;
+  }
+
+  .hide_View {
+    position: absolute;
+    width: 100vw;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: #0000007a;
+    z-index: 1;
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+  .Show_View {
+    display: none;
+  }
+
+  .hide_Component {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------ Common css for all screen ------------------------------------------ */
+
+/* ------------------------------------------------------Search Bar ----------------------------------------------------- */
+
+@media (max-width: 898px) {
+  .searchBox_Order {
+    width: 100% !important;
+    order: -1;
+  }
+}
+
+/* ------------------------------------------------------- Date Filter --------------------------------------------- */
+
+.filter_Reset_Image {
+  width: 25px !important;
+  height: 25px !important;
+}
+
+.date_Filter_Main_Container {
+  width: 100%;
+  /* padding: 0 10px; */
+}
+
+@media (max-width: 620px) {
+  .filter_Image_Display {
+    display: none;
+  }
+}
+
+@media (max-width: 580px) {
+  .date_Filter_Main_Container {
+    gap: 5px !important;
+  }
+  .filter_Text {
+    border: none;
+    font-size: 12px;
+  }
+
+  .filter_Date {
+    font-size: 12px;
+  }
+  .filter_Reset_Image {
+    width: 16px !important;
+    height: 16px !important;
+  }
+}
+@media (max-width: 500px) {
+  .hide_Filter_Text {
+    display: none;
+  }
+}
+@media (max-width: 418px) {
+  .filter_Text {
+    padding: 0 !important;
+  }
+  .filter_Date_Container {
+    padding: 0 !important;
+  }
+  .filter_Date {
+    padding: 5px 2px !important;
+  }
+  .reset_paddings {
+    padding: 7px !important;
+  }
+  .filter_Image_Size {
+    font-size: 12px;
+  }
+}
+
+/* --------------------------------------------------------- Table CSS --------------------------------------------- */
+.leads_Table_Main_Container {
+  width: 100%;
+}
+.leads_Table_Container {
+  width: 100%;
+  /* overflow-y: scroll; */
+}
+.leads_Table {
+  width: max-content;
+}
+
+/* ---------------------------------------Leads------------------------------------------ */
+
+.leads_Button_Container {
+  width: 100%;
+}
+.leads_Button {
+  width: 25%;
+  min-width: 130px;
+}
+
+.leads_Button_Main_Container {
+  width: 100%;
+}
+
+@media (max-width: 898px) {
+  .leads_Button_Main_Container {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 898px) {
+  .button_MaxWidth_first_layer_Container {
+    width: 31.9% !important;
+    max-width: 31.9% !important;
+  }
+  .button_MaxWidth_first_layer {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .button_MaxWidth_Main_Container {
+    width: 100% !important;
+    justify-content: space-between;
+  }
+  .button_MaxWidth_Container {
+    width: 31.9% !important;
+    max-width: 31.9% !important;
+  }
+  .button_MaxWidth {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+@media (max-width: 769px) {
+  .button_MaxWidth_Container {
+    width: 48.5% !important;
+    max-width: 48.5% !important;
+  }
+}
+
+@media (max-width: 648px) {
+  .button_MaxWidth_first_layer_Container {
+    width: 48.5% !important;
+    max-width: 48.5% !important;
+    /* min-width: 130px !important; */
+  }
+}
+
+@media (max-width: 600px) {
+  .leads_Button_Container {
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .leads_Button {
+    width: 49%;
+  }
+}
+
+@media (max-width: 492px) {
+  .button_MaxWidth_first_layer_Container {
+    width: 100% !important;
+    max-width: 100% !important;
+    /* min-width: 130px !important; */
+  }
+  .button_MaxWidth_Container {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .leads_Button {
+    width: 100%;
+  }
+}
+
+/* --------------------------------------------------------- Contacts ---------------------------------------------- */
+
+@media (max-width: 996px) {
+  .contact_Dropdown_Main_Container {
+    width: 100%;
+  }
+  .action_Button_Main_Container {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 897px) {
+  .contact_Dropdown_Container {
+    width: 48.99%;
+  }
+  .contact_Dropdown_Button {
+    width: 100% !important;
+  }
+  .action_Button_Main_Container {
+    justify-content: space-between;
+  }
+  .action_Button_Container {
+    width: 50% !important;
+    display: flex;
+    justify-content: end !important;
+  }
+  .action_Button {
+    width: 98% !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .action_Button_Container {
+    width: 100% !important;
+    justify-content: start !important;
+  }
+  .action_Button {
+    width: 49% !important;
+  }
+}
+
+@media (max-width: 648px) {
+  .contact_Dropdown_Container {
+    width: 100%;
+  }
+  .contact_Dropdown_Button {
+    width: 100% !important;
+  }
+
+  .action_Button {
+    width: 100% !important;
+  }
+}
+
+/* ------------------------------------------------------------ Reports -----------------------------------------------*/
+
+.reports_Buttons_Main_Container {
+  width: 100%;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.reports_Buttons_Container {
+  width: 15%;
+  white-space: nowrap;
+  max-width: 18%;
+  min-width: 140px;
+}
+@media (max-width: 1119px) {
+  .reports_Buttons_Container {
+    width: 32%;
+    max-width: 32%;
+  }
+}
+
+@media (max-width: 652px) {
+  .reports_Buttons_Container {
+    width: 48%;
+    max-width: 49%;
+  }
+}
+@media (max-width: 460px) {
+  .reports_Buttons_Container {
+    width: 100%;
+    max-width: 100%;
+  }
+  .reports_Heading_Text {
+    font-size: 22px;
+  }
+}
+
+/* ---------------------------------------------------- Finance ----------------------------- */
+
+@media (max-width: 460px) {
+  .finance_Buttons_Text {
+    font-size: 14px;
+  }
+  .finance_Buttons_Main_Container {
+    justify-content: center !important;
+  }
+  .finance_Heading_Text {
+    font-size: 22px;
+  }
+}
+
+/* -------------------------------------------------- Sales Order -------------------------------------- */
+
+@media (max-width: 897px) {
+  .sales_Oreder_Dropdown_Container {
+    width: 100%;
+  }
+}
+
+/* ---------------------------------------------- Service Box ------------------------------------------ */
+@media (max-width: 897px) {
+  .service_Button_Main_Container {
+    width: 100%;
+  }
+  .service_Button_Container {
+    width: 48.9%;
+  }
+  .service_Action_Main_Container {
+    width: 100%;
+    /* border:1px solid red; */
+    justify-content: space-between;
+  }
+  .service_Action_Container {
+    width: 42%;
+  }
+  .service_Action_Button {
+    width: 100%;
+  }
+}
+@media (max-width: 768px) {
+  .service_Action_Container {
+    width: 48.9%;
+  }
+}
+@media (max-width: 648px) {
+  .service_Button_Main_Container {
+    flex-wrap: wrap;
+  }
+  .service_Button_Container {
+    width: 100%;
+  }
+  .service_Action_Container {
+    width: 100%;
+  }
+}
+
+/* --------------------------------------------------------- Settings Screen -------------------------------------------- */
+
+.settings_Border {
+  border: 1px solid red;
+}
+
