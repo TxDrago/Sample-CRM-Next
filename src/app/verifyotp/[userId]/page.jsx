@@ -16,7 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import {
   showSuccessToast,
   showErrorToast,
-} from "../../../utils/toastNotifications";
+} from "@/utils/toastNotifications";
 
 const VerifyOtp = () => {
   const { userId } = useParams();
@@ -293,7 +293,7 @@ const OtpForm = ({
           <div className="flex justify-between mb-2">
             <span>{emailreg}</span>
             {/* Change button on email 
-            <Link to="/" className="text-sm underline text-cyan-500">
+            <Link href="/" className="text-sm underline text-cyan-500">
               Change
             </Link>
             */}

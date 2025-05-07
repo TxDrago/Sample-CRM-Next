@@ -14,7 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 import {
   showSuccessToast,
   showErrorToast,
-} from "../../utils/toastNotifications";
+} from "@/utils/toastNotifications";
 
 // Image
 import Image from "next/image";

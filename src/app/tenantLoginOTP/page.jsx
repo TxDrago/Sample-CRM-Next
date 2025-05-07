@@ -85,6 +85,7 @@ export default function TenantLoginOTP() {
       } else {
         showSuccessToast(message);
         router.push(`/panel/${BusinessType}/dashboard`);
+        console.log("BusinessType :  ",BusinessType);
       }
     } catch (error) {
       showErrorToast(error?.response?.data?.message || "Something went wrong.");

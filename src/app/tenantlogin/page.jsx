@@ -16,7 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import {
   showSuccessToast,
   showErrorToast,
-} from "./../../utils/toastNotifications";
+} from "@/utils/toastNotifications";
 
 //ImageUsed
 import Image from "next/image";
@@ -44,7 +44,6 @@ import { jwtDecode } from "jwt-decode";
 import { FaStarOfLife } from "react-icons/fa";
 
 export default function TenantLogin() {
-
   const router = useRouter();
   const msalInstance = getMsalInstance();
 
@@ -73,10 +72,10 @@ export default function TenantLogin() {
   const handleMicrosoftLogin = async () => {
     try {
       const msalInstance = getMsalInstance();
-  
+
       // Initialize the instance before use
       await msalInstance.initialize();
-  
+
       const loginResponse = await msalInstance.loginPopup(loginRequest);
       msalInstance.setActiveAccount(loginResponse.account);
       setIsAuthenticated(true);
@@ -94,7 +93,7 @@ export default function TenantLogin() {
       if (!activeAccount) {
         throw new Error("No active account! Please log in.");
       }
-  
+
       let tokenResponse;
       try {
         tokenResponse = await msalInstance.acquireTokenSilent({
@@ -105,17 +104,21 @@ export default function TenantLogin() {
         console.error("Silent token failed, trying popup:", error);
         tokenResponse = await msalInstance.acquireTokenPopup(loginRequest);
       }
-  
+
       const headers = { Authorization: `Bearer ${tokenResponse.accessToken}` };
-      const userProfile = await fetch(graphConfig.graphMeEndpoint, { headers }).then((res) => res.json());
-  
+      const userProfile = await fetch(graphConfig.graphMeEndpoint, {
+        headers,
+      }).then((res) => res.json());
+
       let managerProfile = null;
       try {
-        managerProfile = await fetch(graphConfig.graphManagerEndpoint, { headers }).then((res) => res.json());
+        managerProfile = await fetch(graphConfig.graphManagerEndpoint, {
+          headers,
+        }).then((res) => res.json());
       } catch (error) {
         console.warn("Failed to fetch manager profile:", error);
       }
-  
+
       setUserData(userProfile);
       setManagerData(managerProfile);
     } catch (error) {
@@ -123,7 +126,6 @@ export default function TenantLogin() {
     }
   };
 
-  
   // Check existing sessions
   useEffect(() => {
     const accounts = msalInstance.getAllAccounts();
@@ -164,6 +166,8 @@ export default function TenantLogin() {
       );
 
       const loginDetail = response.data.data;
+      // Set cookie manually (on login)
+      document.cookie = `token=${loginDetail.token}; path=/`;
       localStorage.setItem("token", loginDetail.token);
       localStorage.setItem("userDetail", JSON.stringify(loginDetail));
       localStorage.setItem("myData_forget", userData.displayName);
@@ -177,7 +181,6 @@ export default function TenantLogin() {
       }
     }
   };
-
 
   //---------------------------------------------------- Microsoft Authentication End ----------------------------------------
 
@@ -319,7 +322,7 @@ export default function TenantLogin() {
       //IMP for handling businessType such as Brokerage, IT, Retail.... etc
       localStorage.setItem(
         "businessType",
-        response.data.data.userDetail.businessType.replace(/\s+/g, "")
+        response.data.data.userDetail.businessType.replace(/\s+/g, "").toLowerCase()
       );
 
       localStorage.setItem("activeSidebarKey", 1);
@@ -330,6 +333,9 @@ export default function TenantLogin() {
       );
 
       localStorage.setItem("businessRole", response.data.data.userDetail.role);
+
+        // Set cookie manually (on login)
+        document.cookie = `token=${response.data.data.token}; path=/`;
 
       localStorage.setItem("token", response.data.data.token);
 

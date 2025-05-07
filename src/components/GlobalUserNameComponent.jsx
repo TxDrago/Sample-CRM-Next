@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { tenant_base_url, protocal_url } from "../../../../Config/config";
+import { tenant_base_url, protocal_url } from "@/Config/Config";
 
 export default function GlobalUserNameComponent({
   fieldName,
