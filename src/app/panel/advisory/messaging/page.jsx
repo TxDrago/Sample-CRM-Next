@@ -394,7 +394,7 @@ export default function Messaging() {
         </div>
         {/* ----------------------------------- Drawer Part of Opacity ------------------------------------------ */}
         <div
-          className={`fixed inset-0 z-[90] bg-black bg-opacity-30 transition-opacity md:hidden ${
+          className={`fixed inset-0 z-[90] bg-black/30 transition-opacity md:hidden ${
             isDrawerOpen ? "block" : "hidden"
           }`}
           onClick={() => setIsDrawerOpen(false)}

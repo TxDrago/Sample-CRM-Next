@@ -97,7 +97,7 @@ const LeadStatusModal = ({ onClose }) => {
   return (
     <>
       <ToastContainer />
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-20">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20">
         <div className="w-10/12 rounded-lg bg-white sm:w-4/12">
           <div className="flex items-center justify-center rounded-t-lg bg-cyan-500 px-2 py-2 text-xl font-medium text-white">
             <h2 className="mx-auto">Leads Allotment</h2>
