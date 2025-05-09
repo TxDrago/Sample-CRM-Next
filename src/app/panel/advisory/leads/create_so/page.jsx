@@ -23,16 +23,16 @@ import { getHostnamePart } from "@/components/GlobalHostUrl";
 
 //dropDown --->>> Data
 //LanguageDropDown
-import languageDropDown from "../../../../data/dropdown/Languages/languageDropdown";
+import languageDropDown from "@/components//dropdown/Languages/languageDropdown";
 
 //businessDropDown
-import businessDropDown from "../../../../data/dropdown/Business/businessDropdown";
+import businessDropDown from "@/components//dropdown/Business/businessDropdown";
 
 //serviceDropDown
-import serviceDropDown from "../../../../data/dropdown/Term/termDropDown";
+import serviceDropDown from "@/components//dropdown/Term/termDropDown";
 
 //term
-import termDropDown from "../../../../data/dropdown/Term/termDropDown";
+import termDropDown from "@/components//dropdown/Term/termDropDown";
 
 //Toast-Conatainer
 import { ToastContainer } from "react-toastify";

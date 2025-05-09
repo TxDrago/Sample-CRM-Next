@@ -4,6 +4,9 @@ import { useState } from "react";
 import Header from "@/components/Advisory/Header";
 import SidebarBar from "@/components/Advisory/Sidebar";
 
+//-------------------------- Import Global CSS --------------------
+import "@/styles/globals.css";
+
 export default function AdvisoryLayout({ children }) {
   const [toggle, setToggle] = useState(false);
 

@@ -15,6 +15,7 @@ import {
   showErrorToast,
   showSuccessToast,
 } from "@/utils/toastNotifications";
+import Breadcrumb from "../Breadcrumb/Breadcrumb";
 
 export default function Department() {
   const name = getHostnamePart();
@@ -222,6 +223,8 @@ export default function Department() {
                 Add department
               </button>
             </div>
+              {/*---------------------------------------------------------------- BreadCrumb PROP  ----------------------------------------------------------------*/}
+              <Breadcrumb />
             <div className="leads_Table_Main_Container mt-3 overflow-x-auto shadow-md">
               <div className="leads_Table_Container min-w-full rounded-md">
                 <table className="leads_Table min-w-full bg-white">

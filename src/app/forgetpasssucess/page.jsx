@@ -34,7 +34,7 @@ export default function ForgetPassSuccess() {
             <div className="relative inline-block px-4 text-sm bg-white">
               <span className="font-light">
                 Back to{" "}
-                <Link href="../tenantlogin" className="text-cyan-500">
+                <Link href="/tenantlogin" className="text-cyan-500">
                   {" "}
                   Login
                 </Link>

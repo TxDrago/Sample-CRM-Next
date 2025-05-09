@@ -30,6 +30,9 @@ nextjs-portal,
   Main_Screen_Large
   are those when toggle is true means small sidebar and large main screen ie short view
     */
+    .Side_Bar_Large {
+      width: 7vw;
+    }
 
     .arsenal-sc-regular {
       font-family: "Arsenal SC", serif;

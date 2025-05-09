@@ -9,6 +9,7 @@ import { RiDeleteBin6Fill } from "react-icons/ri";
 import { useParams } from "next/navigation";
 import axios from "axios";
 import { tenant_base_url, protocal_url } from "@/Config/Config";
+import Breadcrumb from "../Breadcrumb/Breadcrumb";
 
 export default function CallingExtension() {
   const { id } = useParams();
@@ -148,6 +149,8 @@ export default function CallingExtension() {
                 Add Calling Extension
               </button>
             </div>
+              {/*---------------------------------------------------------------- BreadCrumb PROP  ----------------------------------------------------------------*/}
+              <Breadcrumb />
             <div className="leads_Table_Main_Container mt-3 overflow-x-auto shadow-md">
               <div className="leads_Table_Container min-w-full rounded-md">
                 <table className="leads_Table min-w-full bg-white">

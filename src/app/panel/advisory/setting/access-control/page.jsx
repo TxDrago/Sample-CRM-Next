@@ -9,6 +9,7 @@ import axios from "axios";
 import { tenant_base_url, protocal_url } from "@/Config/Config";
 import AddAccessControl from "./Add_Windows/AddAccessControl";
 import EditAccessControl from "./Edit_Window/EditAccessControl";
+import Breadcrumb from "../Breadcrumb/Breadcrumb";
 
 export default function AccessControl() {
   const [activeComponent, setActiveComponent] = useState("Table");
@@ -100,6 +101,8 @@ export default function AccessControl() {
             Add Access Control
           </button>
         </div>
+          {/*---------------------------------------------------------------- BreadCrumb PROP  ----------------------------------------------------------------*/}
+                    <Breadcrumb />
         <div className="leads_Table_Main_Container mt-3 overflow-x-auto shadow-md">
           <div className="leads_Table_Container min-w-full rounded-md">
             <table className="leads_Table min-w-full bg-white">

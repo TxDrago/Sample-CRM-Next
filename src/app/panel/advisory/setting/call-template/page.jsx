@@ -12,6 +12,7 @@ import { getHostnamePart } from "@/components/GlobalHostUrl";
 
 import { ToastContainer } from "react-toastify";
 import { showErrorToast } from "@/utils/toastNotifications";
+import Breadcrumb from "../Breadcrumb/Breadcrumb";
 
 export default function CallTemplate() {
   const name = getHostnamePart();
@@ -167,7 +168,8 @@ export default function CallTemplate() {
             Cancel
           </button>
         </div>
-
+  {/*---------------------------------------------------------------- BreadCrumb PROP  ----------------------------------------------------------------*/}
+  <Breadcrumb />
         <form onSubmit={handleSubmit} className="flex">
           <div className="w-full">
             <div className="mt-3 flex-grow rounded-xl bg-white shadow-md">

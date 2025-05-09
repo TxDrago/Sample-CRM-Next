@@ -25,7 +25,7 @@ import { tenant_base_url, protocal_url } from "@/Config/Config";
 import { getHostnamePart } from "@/components/GlobalHostUrl";
 
 //LanguageDropDown
-import languageDropDown from "../../../../data/dropdown/Languages/languageDropdown";
+import languageDropDown from "@/components//dropdown/Languages/languageDropdown";
 
 //dropDown --->>> customHooks
 import useManagedBy from "@/Hooks/ManagedBy/useManagedBy";

@@ -21,7 +21,7 @@ import { getHostnamePart } from "@/components/GlobalHostUrl";
 import { tenant_base_url, protocal_url } from "@/Config/Config";
 
 //LanguageDropDown
-import languageDropDown from "../../../../../data/dropdown/Languages/languageDropdown";
+import languageDropDown from "@/components/dropdown/Languages/languageDropdown";
 
 //-----------------------------ToastContainer-----------------------------
 import { ToastContainer } from "react-toastify";

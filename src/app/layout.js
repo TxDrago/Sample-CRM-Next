@@ -3,7 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 
 //-------------------------- Import Global CSS --------------------
-import "./../styles/globals.css";
+import "@/styles/globals.css";
 
 //-------------------------- Metadata ----------------------
 export const metadata = {

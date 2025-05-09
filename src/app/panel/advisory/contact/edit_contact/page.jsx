@@ -26,7 +26,7 @@ import {
 import { ToastContainer } from "react-toastify";
 
 //LanguageDropDown
-import languageDropDown from "../../../../data/dropdown/Languages/languageDropdown";
+import languageDropDown from "@/components//dropdown/Languages/languageDropdown";
 
 //dropDown --->>> customHooks
 import useLeadStatus from "@/Hooks/LeadStatus/useLeadStatus";

@@ -9,6 +9,7 @@ import { RiDeleteBin6Fill } from "react-icons/ri";
 import { useParams } from "next/navigation";
 import axios from "axios";
 import { tenant_base_url, protocal_url } from "@/Config/Config";
+import Breadcrumb from "../Breadcrumb/Breadcrumb";
 
 export default function Department() {
   const { id } = useParams();
@@ -147,6 +148,8 @@ export default function Department() {
                 Add Groups
               </button>
             </div>
+              {/*---------------------------------------------------------------- BreadCrumb PROP  ----------------------------------------------------------------*/}
+              <Breadcrumb />
             <div className="mt-3 overflow-x-auto">
               <div className="min-w-full overflow-hidden rounded-md">
                 <table className="min-w-full bg-white">

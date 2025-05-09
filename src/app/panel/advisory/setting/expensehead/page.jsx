@@ -19,6 +19,7 @@ import {
   showErrorToast,
   showSuccessToast,
 } from "@/utils/toastNotifications";
+import Breadcrumb from "../Breadcrumb/Breadcrumb";
 
 export default function ExpenseHead() {
   const name = getHostnamePart();
@@ -229,6 +230,8 @@ export default function ExpenseHead() {
               Add Expense Head
             </button>
           </div>
+            {/*---------------------------------------------------------------- BreadCrumb PROP  ----------------------------------------------------------------*/}
+            <Breadcrumb />
           <div className="leads_Table_Main_Container mt-3 overflow-x-auto shadow-md">
             <div className="leads_Table_Container leads_Table min-w-full rounded-md">
               <table className="min-w-full bg-white">

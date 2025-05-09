@@ -6,6 +6,7 @@ import { useState } from "react";
 import { FaBars } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { RiDeleteBin6Fill } from "react-icons/ri";
+import Breadcrumb from "../Breadcrumb/Breadcrumb";
 
 export default function Dlp() {
   const [activeComponent, setActiveComponent] = useState("Table");
@@ -110,6 +111,8 @@ export default function Dlp() {
             Add Policy
           </button>
         </div>
+          {/*---------------------------------------------------------------- BreadCrumb PROP  ----------------------------------------------------------------*/}
+          <Breadcrumb />
         <div className="leads_Table_Main_Container mt-3 overflow-x-auto shadow-md">
           <div className="leads_Table_Container min-w-full rounded-md">
             <table className="leads_Table min-w-full bg-white">

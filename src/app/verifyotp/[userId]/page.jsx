@@ -8,7 +8,6 @@ import {  main_base_url } from "@/Config/Config";
 
 //images
 import Image from "next/image";
-// import companyUploadIMG from "../../../../public/images/companyUploadIMG.png";
 import { GiDiamonds } from "react-icons/gi";
 
 import { ToastContainer } from "react-toastify";
