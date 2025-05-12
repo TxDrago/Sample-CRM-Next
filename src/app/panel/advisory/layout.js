@@ -11,7 +11,7 @@ export default function AdvisoryLayout({ children }) {
   const [toggle, setToggle] = useState(false);
 
   return (
-    <div className="flex relative">
+    <div className="flex relative w-screen">
       {/* Overlay */}
       <div
         className={toggle ? "hide_View" : "Show_View"}
@@ -29,7 +29,7 @@ export default function AdvisoryLayout({ children }) {
 
       {/* Main Content */}
       <div
-        className={`flex h-screen flex-col ${
+        className={`flex h-screen w-full flex-col ${
           toggle ? "Main_Screen_Large" : "Main_Screen_Small"
         }`}
       >

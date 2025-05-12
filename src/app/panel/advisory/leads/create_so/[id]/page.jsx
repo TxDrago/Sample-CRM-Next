@@ -1,12 +1,12 @@
 "use client";
 //NOTE-->>
-//BROKERAGE + ADVISARY
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 //react
 import { useState, useEffect } from "react";
 
-//reactPackages
-import { Link, useNavigate, useParams } from "react-router-dom";
 
 //reactIcon
 import { FaAngleDown, FaStarOfLife } from "react-icons/fa";
@@ -14,8 +14,8 @@ import { IoInformationCircle } from "react-icons/io5";
 
 //external Packages
 import axios from "axios";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+
+ 
 
 //API-Keywords
 import { tenant_base_url, protocal_url } from "@/Config/Config";
@@ -549,6 +549,12 @@ export default function CreateSOLead() {
     }
   };
 
+    //--------------------------------- Set Description -------------------------
+
+const handleDescriptionChange = (event) => {
+  setdescription(event.target.value);
+};
+
   return (
     <>
       <ToastContainer />
@@ -564,7 +570,7 @@ export default function CreateSOLead() {
           <div>
             {/* ------------------------------------------------> Cancel Button  <------------------------------------------------ */}
             <Link
-              to={`/panel/${BusinessType}/leads`}
+              href={`/panel/${BusinessType}/leads`}
               className="rounded border border-blue-500 px-4 py-1 text-blue-500 sm:px-6"
             >
               Cancel
@@ -2083,14 +2089,14 @@ export default function CreateSOLead() {
                   >
                     Description
                   </label>
-                  <ReactQuill
-                    name="remarks"
-                    value={description}
-                    className="h-60 max-h-60 hyphens-auto text-balance"
-                    theme="snow"
-                    onChange={setdescription}
-                    placeholder="Add Description"
-                  />
+             
+                      <textarea
+      name="description"
+      value={description}
+      onChange={handleDescriptionChange}
+      placeholder="Add Description"
+      className="mt-1 h-60 max-h-full w-full resize-none text-balance"
+    />
                 </div>
               </div>
               <div className="flex justify-end px-2">

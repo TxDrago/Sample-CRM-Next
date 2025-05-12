@@ -96,8 +96,8 @@ export default function PasswordPolicy() {
     };
 
     return (
-      <div className="min-w-screen m-3">
-        <div className="min-w-screen flex flex-wrap items-center justify-between gap-5">
+      <div className="  m-3">
+        <div className="  flex flex-wrap items-center justify-between gap-5">
           <div className="flex items-center gap-2">
             <h1 className="text-3xl font-medium">Password Policy</h1>
             <h2 className="text-center text-xl font-medium text-red-500">

@@ -37,8 +37,7 @@ import { getHostnamePart } from "@/components/GlobalHostUrl";
 import Image from "next/image";
 
 // External Emoji Files
-import Picker from "@emoji-mart/react";
-import data from "@emoji-mart/data";
+import EmojiPicker from 'emoji-picker-react';
 
 import { Menu } from "lucide-react";
 
@@ -352,8 +351,8 @@ export default function Messaging() {
   };
   //---------------------------------------------- Emoji Picker Code ------------------------------------------
   //---------------------------------------------- Emoji Picker Select ------------------------------------------
-  const handleEmojiSelect = (emoji) => {
-    setMessageContent((prev) => prev + emoji.native);
+  const handleEmojiSelect = (emojiData) => {
+    setMessageContent((prev) => prev + emojiData.emoji);
   };
 
   //---------------------------------------------- Emoji Picker Close on Out Side Click ------------------------------------------
@@ -633,7 +632,7 @@ export default function Messaging() {
                       ref={pickerRef}
                       className="absolute bottom-12 left-0 z-10 rounded-lg bg-white shadow-lg"
                     >
-                      <Picker data={data} onEmojiSelect={handleEmojiSelect} />
+                      <EmojiPicker  onEmojiClick={handleEmojiSelect} />
                     </div>
                   )}
                 </div>

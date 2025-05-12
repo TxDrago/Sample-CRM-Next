@@ -1,7 +1,6 @@
 "use client";
 
 //react
-import Link from "next/link";
 
 //react
 import { useState, useEffect } from "react";
@@ -11,7 +10,7 @@ import { MdEdit } from "react-icons/md";
 import { RiDeleteBin6Fill } from "react-icons/ri";
 
 
-import { useParams } from "next/navigation";
+
 
 //external Packages
 import axios from "axios";
@@ -20,8 +19,7 @@ import { tenant_base_url, protocal_url } from "@/Config/Config";
 import { getHostnamePart } from "@/components/GlobalHostUrl";
 import GlobalUserNameComponent from "@/components/GlobalUserNameComponent";
 
-import { IoMdHome } from "react-icons/io";
-import { IoIosArrowForward } from "react-icons/io";
+
 
 //toastify~
 import { ToastContainer } from "react-toastify";
@@ -33,7 +31,6 @@ import Breadcrumb from "../Breadcrumb/Breadcrumb";
 
 export default function UserOperation() {
   //to make id unique
-  const { id } = useParams();
 
      //--------------------------------------- Set Business Type --------------------------------------------
        const [BusinessType, setBusinessType] = useState("");
@@ -282,10 +279,10 @@ export default function UserOperation() {
   return (
     <>
       <ToastContainer />
-      <div className="m-3 min-w-screen">
+      <div className="m-3  ">
         {active ? (
           <>
-            <div className="flex flex-wrap items-center justify-between gap-5 min-w-screen">
+            <div className="flex flex-wrap items-center justify-between gap-5  ">
               <h1 className="text-3xl font-medium">User Operation</h1>
               <button
                 onClick={handleActiveState}
@@ -438,7 +435,7 @@ export default function UserOperation() {
           </>
         ) : (
           <>
-            <div className="flex items-center justify-between min-w-screen">
+            <div className="flex items-center justify-between  ">
               <h1 className="text-3xl font-medium">
                 {isEditMode ? "Edit User Operation" : "Add user Operation"}
               </h1>

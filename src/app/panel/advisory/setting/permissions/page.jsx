@@ -113,9 +113,9 @@ export default function Permissions() {
     };
 
     return (
-      <div className="m-3 min-w-screen">
+      <div className="m-3  ">
         <ToastContainer />
-        <div className="flex flex-wrap items-center justify-between gap-5 min-w-screen">
+        <div className="flex flex-wrap items-center justify-between gap-5  ">
           <div className="flex items-center gap-2">
             <h1 className="text-3xl font-medium">Permissions</h1>
           </div>

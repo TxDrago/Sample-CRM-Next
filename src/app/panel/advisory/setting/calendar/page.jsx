@@ -2,17 +2,17 @@
 
 //react
 
+
+
 import { useState, useEffect } from "react";
 import { FaAngleDown, FaBars } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { RiDeleteBin6Fill } from "react-icons/ri";
-import { useParams } from "next/navigation";
 import axios from "axios";
 import { tenant_base_url, protocal_url } from "@/Config/Config";
 import Breadcrumb from "../Breadcrumb/Breadcrumb";
 
 export default function Department() {
-  const { id } = useParams();
   const [active, setActive] = useState(true);
   const [users, setUsers] = useState([
     {
@@ -136,10 +136,10 @@ export default function Department() {
 
   return (
     <>
-      <div className="min-w-screen m-3">
+      <div className="  m-3">
         {active ? (
           <>
-            <div className="min-w-screen flex items-center justify-between">
+            <div className="  flex items-center justify-between">
               <h1 className="text-3xl font-medium">Add Group</h1>
               <button
                 onClick={handleActiveState}
@@ -235,7 +235,7 @@ export default function Department() {
           </>
         ) : (
           <>
-            <div className="min-w-screen flex items-center justify-between">
+            <div className="  flex items-center justify-between">
               <h1 className="text-3xl font-medium">
                 {isEditMode ? "Edit User Operation" : "Add user Operation"}
               </h1>

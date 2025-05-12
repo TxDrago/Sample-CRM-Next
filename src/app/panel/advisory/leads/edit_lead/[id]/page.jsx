@@ -1,32 +1,37 @@
 "use client";
-
 //react
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 import { useState, useEffect } from "react";
-//reactIcon->
-import { FaAngleDown } from "react-icons/fa";
-import { MdOutlineContactPhone } from "react-icons/md";
-//reactPackages
-import { useNavigate, useParams } from "react-router-dom";
+
+
+//reactIcon
+import { FaAngleDown, FaStarOfLife } from "react-icons/fa";
+import { IoInformationCircle } from "react-icons/io5";
+import { GrContactInfo } from "react-icons/gr";
 
 //external Packages
 import axios from "axios";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-//file
+
+//textBox
+ 
+
+//API-Keywords
 import { tenant_base_url, protocal_url } from "@/Config/Config";
-//Images
 import { getHostnamePart } from "@/components/GlobalHostUrl";
-import {
-  showErrorToast,
-  showSuccessToast,
-} from "@/utils/toastNotifications";
-import { ToastContainer } from "react-toastify";
 
 //LanguageDropDown
 import languageDropDown from "@/components//dropdown/Languages/languageDropdown";
+
+//-----------------------------ToastContainer-----------------------------
+import { ToastContainer } from "react-toastify";
+import {
+  showSuccessToast,
+  showErrorToast,
+} from "@/utils/toastNotifications";
 
 //dropDown --->>> customHooks
 import useLeadStatus from "@/Hooks/LeadStatus/useLeadStatus";
@@ -34,12 +39,24 @@ import useLeadSource from "@/Hooks/LeadSource/useLeadSource";
 import useManagedBy from "@/Hooks/ManagedBy/useManagedBy";
 import useSegment from "@/Hooks/Segment/useSegment";
 
-//------------------------------------------------------------------------------->CODE STARTS FROM HERE<-------------------------------------------------------------------------------
-export default function CreateContact() {
+export default function Createlead() {
   //to make id unique
   const { id } = useParams();
  const router = useRouter();
+
+  //IMP used as ${name} in an API
   const name = getHostnamePart();
+
+    //--------------------------------------- Set Business Type --------------------------------------------
+             const [BusinessType, setBusinessType] = useState("");
+              
+             useEffect(() => {
+               const storedType = localStorage.getItem("businessType") || "";
+               setBusinessType(storedType);
+             }, []);
+
+  //const bearer_token for API Config
+  const bearer_token = localStorage.getItem("token");
 
   // Custom Hook
   const { leadStatus } = useLeadStatus();
@@ -47,16 +64,7 @@ export default function CreateContact() {
   const { managedBy } = useManagedBy();
   const { segments } = useSegment();
 
-   //--------------------------------------- Set Business Type --------------------------------------------
-         const [BusinessType, setBusinessType] = useState("");
-          
-         useEffect(() => {
-           const storedType = localStorage.getItem("businessType") || "";
-           setBusinessType(storedType);
-         }, []);
-
-  //form description is kept-out
-  const [description, setdescription] = useState("Add Text Here");
+  //-->--->createLead/editLead--> Schema<->Model
   const [editLead, seteditLead] = useState({
     id: "",
     name: "",
@@ -88,7 +96,8 @@ export default function CreateContact() {
     segments: [],
   });
 
-  //----------------------------------------------------------------------------------------
+  //form description is kept-out
+  const [description, setdescription] = useState("Add Text Here");
 
   //imp to identify mode
   const [isEditMode, setIsEditMode] = useState(false);
@@ -103,7 +112,6 @@ export default function CreateContact() {
 
   //GET by ID---------------------------//GET---------------------------//GET---------------------------by ID-----------by ID
   async function handleLead() {
-    const bearer_token = localStorage.getItem("token");
     try {
       const config = {
         headers: {
@@ -111,11 +119,12 @@ export default function CreateContact() {
         },
       };
       const response = await axios.get(
-        `${protocal_url}${name}.${tenant_base_url}/Contact/contact/${id}`,
+        `${protocal_url}${name}.${tenant_base_url}/Lead/lead/${id}`,
         config,
       );
       const data = response.data.data;
 
+      //desciption is kept out of model
       setdescription(data.description);
 
       seteditLead({
@@ -124,13 +133,12 @@ export default function CreateContact() {
         language: data.language || "",
         company: data.company || "",
         title: data.tital || "",
-        leadSource: data.leadsSource || "",
-        leadesStatus: data.leadesStatus || "N/A",
+        leadSource: data?.leadsSource || "N/A",
+        leadesStatus: data?.leadesStatus || "N/A",
         mobNo: data.mobileNo || "",
         phNo: data.phoneNo || "",
         email: data.email || "",
-        assigned_To: data.assigned_To || "N/A",
-        callBackDateTime: data.call_bck_DateTime || "",
+        assigned_To: data?.assigned_To || "N/A",
         street: data.street || "",
         pinCode: data.postalCode || "",
         country: data.country || "",
@@ -142,25 +150,60 @@ export default function CreateContact() {
         investmet: data.investment || "",
         advisoryExp: data.advisaryExp || "",
         segments: data.segments || [],
-        trialStartDate: data.trialStartDate || "",
-        trialEndDate: data.trialEndDate || "",
+        trialStartDate: data.trialStartDate || null,
+        trialEndDate: data.trialEndDate || null,
         tradingYears: data.trading_yrs || "",
+        callBackDateTime: data.call_bck_DateTime || null,
         contactId: data.contactId || "",
         lastModifiedBy: data.lastModifiedBy || "",
       });
     } catch (error) {
-      showErrorToast("Error fetching leads:", error);
+      console.error("Error fetching leads:", error);
     }
   }
 
   //----------------------------------------------------------------------------------------
-  //PooL / Lead Source ToDropDown
-  // const [poolToDropDown, setPoolToDropDown] = useState([]);
 
+  //---------------------------> Language <---------------------------
+  const [defaultTextLanguageDropDown, setDefaultTextLanguageDropDown] =
+    useState("Select Language");
+
+  const [isDropdownVisibleLanguage, setisDropdownVisibleLanguage] =
+    useState(false);
+
+  const toggleDropdownLanguage = () => {
+    setisDropdownVisibleLanguage(!isDropdownVisibleLanguage);
+  };
+
+  const handleDropdownLanguage = (Language) => {
+    setDefaultTextLanguageDropDown(Language);
+    setisDropdownVisibleLanguage(!isDropdownVisibleLanguage);
+    seteditLead((prevTask) => ({
+      ...prevTask,
+      language: Language,
+    }));
+  };
+
+  //----------------------------------------------------------------------------------------
+  //---------------------------> Lead Source <---------------------------
+  //default text for Lead Source
   const [defaultTextPool, setDefaultTextPool] = useState("Select Lead Source");
 
+  //dropDown State
   const [isPoolDropdownOpen, setIsPoolDropdownOpen] = useState(false);
 
+  useEffect(() => {
+    if (editLead?.leadSource) {
+      setDefaultTextPool(editLead.leadSource);
+    } else {
+      setDefaultTextPool("Select Lead Source");
+    }
+  }, [editLead?.leadSource]);
+
+  //error
+  const [error, setError] = useState(null); // New error state
+
+  //
   const [poolEdit, setPoolEdit] = useState("");
 
   const toggleDropdown = () => {
@@ -178,7 +221,7 @@ export default function CreateContact() {
   };
 
   //----------------------------------------------------------------------------------------
-  //Lead Status ToDropDown
+  //---------------------------> Lead Status <---------------------------
 
   const [defaultTextLeadStatusDropDown, setdefaultTextLeadStatusDropDown] =
     useState("Select Status");
@@ -198,6 +241,8 @@ export default function CreateContact() {
     }));
   };
 
+  //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
   useEffect(() => {
     setdefaultTextSegmentDropDown(
       editLead.segments.length > 0
@@ -216,32 +261,36 @@ export default function CreateContact() {
   };
 
   const handleCheckboxChange = (segment) => {
-    const isChecked = editLead.segments.includes(segment.segment);
+    const isChecked = editLead.segments.includes(segment);
 
     let updatedSegments;
     if (isChecked) {
       // Remove segment if already selected
       updatedSegments = editLead.segments.filter(
-        (selectedSegment) => selectedSegment !== segment.segment,
+        (selectedSegment) => selectedSegment !== segment,
       );
     } else {
       // Add segment if not already selected
-      updatedSegments = [...editLead.segments, segment.segment];
+      updatedSegments = [...editLead.segments, segment];
     }
     seteditLead((prev) => ({
       ...prev,
       segments: updatedSegments,
     }));
+
     setdefaultTextSegmentDropDown(
       updatedSegments.length > 0
         ? updatedSegments.join(", ")
         : "Select Segment",
     );
+
     console.log("Selected segments:", updatedSegments);
   };
 
+  //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  //---------------------------> Assigned To <---------------------------
   const [defaultTextassigned_ToDropDown, setdefaultTextassigned_ToDropDown] =
-    useState("Select Assigned");
+    useState("Select Managed By");
   const [isDropdownassigned_ToDropDown, setisDropdownassigned_ToDropDown] =
     useState(false);
 
@@ -286,8 +335,10 @@ export default function CreateContact() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   //---------->handleSubmit<----------
+  //two different schemas, one for PUT and one for POST
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     const bearer_token = localStorage.getItem("token");
 
     try {
@@ -326,65 +377,148 @@ export default function CreateContact() {
         call_bck_DateTime: editLead.callBackDateTime || null,
         contactID: editLead.contactId,
         lastModifiedBy: editLead.lastModifiedBy,
+        //----------------//
+        description: description,
+      };
+      const formData_POST = {
+        name: editLead.name,
+        language: editLead.language,
+        company: editLead.company,
+        email: editLead.email,
+        tital: editLead.title,
+        leadsSource: editLead.leadSource,
+        leadesStatus: editLead.leadesStatus,
+        mobileNo: editLead.mobNo,
+        phoneNo: editLead.phNo,
+        assigned_To: editLead.assigned_To,
+        street: editLead.street,
+        postalCode: editLead.pinCode,
+        country: editLead.country,
+        city: editLead.city,
+        state: editLead.state,
+        risk_Capacity: editLead.riskCapcity,
+        tradingTime: editLead.tradingTime,
+        tradingType: editLead.tradingType,
+        investment: editLead.investmet,
+        advisaryExp: editLead.advisoryExp,
+        segments: editLead.segments,
+        trialStartDate: editLead.trialStartDate || null,
+        trialEndDate: editLead.trialEndDate || null,
+        trading_yrs: editLead.tradingYears,
+        call_bck_DateTime: editLead.callBackDateTime || null,
+        contactID: editLead.contactId,
+        lastModifiedBy: editLead.lastModifiedBy,
         description: description,
       };
 
-      if (!formData_PUT.name) {
+      console.log(formData_POST);
+
+      //------------------------------------------------------------------------------------> Validations//--> Validations//--> Validations//--> Validations//--> Validations
+
+      if (!formData_POST.name || !formData_PUT.name) {
         showErrorToast("Please enter name");
         return;
       }
 
-      if (!formData_PUT.mobileNo) {
-        showErrorToast("Please enter mobile");
+      if (!formData_POST.mobileNo) {
+        showErrorToast("Please enter mobile number");
         return;
       }
 
       if (
-        formData_PUT.mobileNo.length < 9 ||
+        formData_POST.phoneNo &&
+        (formData_POST.phoneNo.length < 9 || formData_PUT.phoneNo.length > 15)
+      ) {
+        showErrorToast("Please check phone no");
+        return;
+      }
+
+      if (
+        formData_POST.mobileNo.length < 9 ||
         formData_PUT.mobileNo.length > 15
       ) {
         showErrorToast("Invalid mobile number");
         return;
       }
 
-      if (formData_PUT.email && !emailRegex.test(formData_PUT.email)) {
+      if (
+        (formData_POST.email && !emailRegex.test(formData_POST.email)) ||
+        (formData_PUT.email && !emailRegex.test(formData_PUT.email))
+      ) {
         showErrorToast("Invalid email format");
         return;
       }
 
+      //Date Logic Validation
+      const today = new Date().toISOString().split("T")[0];
+
+      //Previous date cannot be selected
+      if (formData_POST.trialStartDate < today) {
+        showErrorToast("Previous date cannot be selected");
+        return;
+      }
+
+      if (formData_POST.trialEndDate < today) {
+        showErrorToast("Previous date cannot be selected");
+        return;
+      }
+
+      //Date should not be more than 1 or less than 1
+      const date =
+        formData_POST.trialEndDate?.split("-")[2] -
+        formData_POST.trialStartDate?.split("-")[2];
+
+      if (
+        formData_POST.trialStartDate &&
+        formData_POST.trialEndDate &&
+        date === 1
+      ) {
+        if (formData_POST.segments.length === 0) {
+          showErrorToast("Please Select segments");
+          return;
+        }
+      }
+
+      if (formData_POST.trialStartDate && !formData_POST.trialEndDate) {
+        showErrorToast("Please Select trial end date");
+        return;
+      }
+
+      if (formData_POST.trialEndDate && !formData_POST.trialStartDate) {
+        showErrorToast("Please Select trial start date");
+        return;
+      }
+
+      // Check if isEditMode and handle API calls accordingly
       if (isEditMode) {
         await axios.put(
-          `${protocal_url}${name}.${tenant_base_url}/Contact/contact/update`,
+          `${protocal_url}${name}.${tenant_base_url}/Lead/lead/update`,
           formData_PUT,
           config,
         );
-        showSuccessToast("Contact updated successfully!");
-        router.push(`/panel/${BusinessType}/contact`);
+        alert("Lead updated successfully!");
+        showSuccessToast("Lead updated successfully!");
+        router.push(`/panel/${BusinessType}/leads`);
+      } else {
+        await axios.post(
+          `${protocal_url}${name}.${tenant_base_url}/Lead/lead/add`,
+          formData_POST,
+          config,
+        );
+        alert("Lead created successfully!");
+        showSuccessToast("Lead created successfully");
+        router.push(`/panel/${BusinessType}/leads`);
       }
     } catch (error) {
-      showErrorToast("An error occurred. Please try again.", error);
+      showErrorToast(error.response?.data?.message || "An error occurred");
     }
   };
 
-  //----------------------------------------------------------------------------------------
-  //LanguageDropDown
-  const [defaultTextLanguageDropDown, setDefaultTextLanguageDropDown] =
-    useState("Select Language");
-  const [isDropdownVisibleLanguage, setisDropdownVisibleLanguage] =
-    useState(false);
+    //--------------------------------- Set Description -------------------------
 
-  const toggleDropdownLanguage = () => {
-    setisDropdownVisibleLanguage(!isDropdownVisibleLanguage);
-  };
-
-  const handleDropdownLanguage = (language) => {
-    setDefaultTextLanguageDropDown(language);
-    setisDropdownVisibleLanguage(false);
-    seteditLead((prevTask) => ({
-      ...prevTask,
-      language: language,
-    }));
-  };
+const handleDescriptionChange = (event) => {
+  setdescription(event.target.value);
+};
 
   return (
     <>
@@ -395,17 +529,29 @@ export default function CreateContact() {
         <div className="mx-3 flex justify-between rounded border bg-white p-3">
           {/* ------------------------------------------------> Text and Logo  <------------------------------------------------ */}
           <div className="flex items-center justify-center gap-3">
-            <MdOutlineContactPhone size={25} />
             <h1 className="text-xl">
-              <h1>Edit Contact</h1>
+              {isEditMode ? (
+                <>
+                  <div className="flex items-center justify-center gap-2">
+                    <GrContactInfo size={25} />
+                    <h1>Edit Lead</h1>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center justify-center gap-2">
+                    <GrContactInfo size={25} />
+                    <h1>Create Lead</h1>
+                  </div>
+                </>
+              )}
             </h1>
           </div>
-
-          {/* ------------------------------------------------> Cancel Button  <------------------------------------------------ */}
           <div>
+            {/* ------------------------------------------------> Cancel Button  <------------------------------------------------ */}
             <Link
-              to={`/panel/${BusinessType}/contact`}
-              className="mx-3 rounded border border-blue-500 px-4 py-1 text-blue-500"
+              href={`/panel/${BusinessType}/leads`}
+              className="rounded border border-blue-500 px-4 py-1 text-blue-500 sm:px-6"
             >
               Cancel
             </Link>
@@ -414,21 +560,17 @@ export default function CreateContact() {
 
         {/* -------------FORM Starts FROM HERE------------- */}
         <form onSubmit={handleSubmit} className="mb-6 flex">
-          {/* ------------------------------------------------> FORM PARENT includes 3 tabs <------------------------------------------------ */}
-
-          {/*Parent Div */}
+          {/* ------------------------------------------------> FORM PARENT includes 4 tabs <------------------------------------------------ */}
           <div className="w-screen">
-            {/*CHILD Div------ Image Input */}
-
+            {/* ------------------------------------------------>TAB  1 :  Lead Information TAB <------------------------------------------------ */}
             <div className="m-3 rounded-xl bg-white shadow-md">
               <h2 className="rounded-t-xl bg-cyan-500 px-4 py-2 font-medium text-white">
-                Contact Details
+                Lead Information
               </h2>
-
-              {/* -------------CONTACT INFORMATION STARTS FROM HERE------------- */}
+              {/* -------------Parent <Lead Information Inputs>------------- */}
               <div className="space-y-3 p-2">
-                {/*CHILD Div------ Image Input */}
-                {/* -------------1------------- */}
+                {/* ------------------------------------1------------------------------------- */}
+                {/* -------------SUB -> Parent -> <Name && Language>------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
                   {/* -------------Name------------- */}
                   <div className="relative flex flex-col">
@@ -436,13 +578,17 @@ export default function CreateContact() {
                       htmlFor="name"
                       className="text-sm font-medium text-gray-700"
                     >
-                      Name
+                      <span className="flex gap-1">
+                        Name
+                        <FaStarOfLife size={8} className="text-red-500" />
+                      </span>
                     </label>
                     <input
                       type="text"
                       name="name"
                       value={editLead.name}
                       onChange={handleChange}
+                      placeholder="Enter your Name"
                       className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
@@ -454,6 +600,7 @@ export default function CreateContact() {
                     >
                       Language
                     </label>
+
                     <div
                       className="relative"
                       onClick={toggleDropdownLanguage}
@@ -489,9 +636,11 @@ export default function CreateContact() {
                     </div>
                   </div>
                 </div>
-                {/* -------------2------------- */}
-                {/* -------------Company------------- */}
+
+                {/* ------------------------------------2------------------------------------- */}
+                {/* -------------SUB -> Parent -> < Company &&  Title >------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
+                  {/* -------------Company------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="company"
@@ -503,9 +652,9 @@ export default function CreateContact() {
                       type="text"
                       name="company"
                       value={editLead.company}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter your Company"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
                   {/* -------------Title------------- */}
@@ -514,21 +663,22 @@ export default function CreateContact() {
                       htmlFor="title"
                       className="text-sm font-medium text-gray-700"
                     >
-                      Title
+                      Lead Title
                     </label>
                     <input
                       type="text"
                       name="title"
                       value={editLead.title}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter Title"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
                 </div>
-                {/* -------------3------------- */}
-                {/* -------------Lead Source------------- */}
+                {/* ------------------------------------3------------------------------------- */}
+                {/* -------------SUB -> Parent -> <Lead Source && Lead Status>------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
+                  {/* -------------Lead Source------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="Pool"
@@ -553,25 +703,44 @@ export default function CreateContact() {
                       </button>
                       {isPoolDropdownOpen && (
                         <div className="absolute top-11 z-10 w-full rounded-md border border-gray-300 bg-white">
-                          <ul className="py-2 text-sm text-gray-700">
-                            {leadSource.map(({ id, poolName }) => (
-                              <li
-                                key={id}
-                                onClick={() =>
-                                  handleDropdownSelection(poolName)
-                                }
-                                className="block cursor-pointer border-b px-4 py-2 hover:bg-cyan-500 hover:text-white"
-                              >
-                                {poolName}
-                              </li>
-                            ))}
-                          </ul>
+                          {error ? (
+                            <div className="py-2 text-red-600">{error}</div>
+                          ) : (
+                            <ul className="py-2 text-sm text-gray-700">
+                              {leadSource.length > 0 ? (
+                                leadSource.map(({ key, poolName }) => (
+                                  <li
+                                    key={key}
+                                    onClick={() =>
+                                      handleDropdownSelection(poolName)
+                                    }
+                                    className="block cursor-pointer border-b px-4 py-2 hover:bg-cyan-500 hover:text-white"
+                                  >
+                                    {poolName}
+                                  </li>
+                                ))
+                              ) : (
+                                <li className="flex items-center gap-1 px-4 py-2 text-center">
+                                  <IoInformationCircle
+                                    size={25}
+                                    className="text-cyan-600"
+                                  />{" "}
+                                  Lead status not available. Go to{" "}
+                                  <span className="font-bold">
+                                    Settings - Add Pool{" "}
+                                  </span>
+                                  .
+                                </li>
+                              )}
+                            </ul>
+                          )}
                         </div>
                       )}
                     </div>
                   </div>
 
                   {/* -------------Lead Status------------- */}
+
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="leadesStatus"
@@ -597,15 +766,31 @@ export default function CreateContact() {
                       {isDropdownVisibleLeadStatus && (
                         <div className="top-10.5 absolute z-10 w-full rounded-md border border-gray-300 bg-white">
                           <ul className="py-2 text-sm text-gray-700">
-                            {leadStatus.map(({ key, status }) => (
-                              <li
-                                key={key}
-                                onClick={() => handleDropdownLeadStatus(status)}
-                                className="block cursor-pointer border-b px-4 py-2 hover:bg-cyan-500 hover:text-white"
-                              >
-                                {status}
+                            {leadStatus.length > 0 ? (
+                              leadStatus.map(({ key, status }) => (
+                                <li
+                                  key={key}
+                                  onClick={() =>
+                                    handleDropdownLeadStatus(status)
+                                  }
+                                  className="block cursor-pointer border-b px-4 py-2 hover:bg-cyan-500 hover:text-white"
+                                >
+                                  {status}
+                                </li>
+                              ))
+                            ) : (
+                              <li className="flex items-center gap-1 px-4 py-2 text-center">
+                                <IoInformationCircle
+                                  size={25}
+                                  className="text-cyan-600"
+                                />{" "}
+                                Lead status not available. Go to{" "}
+                                <span className="font-bold">
+                                  Settings - Add Lead Status{" "}
+                                </span>
+                                .
                               </li>
-                            ))}
+                            )}
                           </ul>
                         </div>
                       )}
@@ -613,22 +798,26 @@ export default function CreateContact() {
                   </div>
                 </div>
 
-                {/* -------------4------------- */}
-                {/* -------------Mobile Number------------- */}
+                {/* ------------------------------------4------------------------------------- */}
+                {/* -------------SUB -> Parent -> <Mobile Numbe && Alternate Number>------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
+                  {/* -------------Mobile Number------------- */}
                   <div className="relative flex flex-col">
                     <label
-                      htmlFor="mobNo"
+                      htmlFor="email"
                       className="text-sm font-medium text-gray-700"
                     >
-                      Mobile Number
+                      <span className="flex gap-1">
+                        Mobile Number
+                        <FaStarOfLife size={8} className="text-red-500" />
+                      </span>
                     </label>
                     <input
-                      type="text"
+                      type="number"
                       name="mobNo"
-                      value={editLead.mobNo}
                       maxLength="15"
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                      value={editLead.mobNo}
+                      className="mt-1 rounded-md border border-gray-300 p-2"
                       onChange={handleContactChange}
                       placeholder="Enter your Mobile Number"
                     />
@@ -644,20 +833,27 @@ export default function CreateContact() {
                     <input
                       type="text"
                       name="phNo"
-                      value={editLead.phNo}
                       maxLength="15"
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                      value={editLead.phNo}
+                      className="mt-1 rounded-md border border-gray-300 p-2"
                       onChange={handleContactChange}
                       placeholder="Enter your Alternate Number"
+                      onInput={(e) => {
+                        e.target.value = e.target.value.replace(
+                          /[a-zA-Z]/g,
+                          "",
+                        ); // Removes all letters (a to z and A to Z)
+                      }}
                     />
                   </div>
                 </div>
-                {/* -------------5------------- */}
-                {/* -------------Email------------- */}
+                {/* ------------------------------------5------------------------------------- */}
+                {/* -------------SUB -> Parent -> <Email && Assigned TO>------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
+                  {/* -------------Email------------- */}
                   <div className="relative flex flex-col">
                     <label
-                      htmlFor="email"
+                      htmlFor="city"
                       className="text-sm font-medium text-gray-700"
                     >
                       Email
@@ -666,12 +862,12 @@ export default function CreateContact() {
                       type="email"
                       name="email"
                       value={editLead.email}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter your Email"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
-                  {/* -------------Assigned to------------- */}
+                  {/* -------------Managed by------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="leadesStatus"
@@ -697,7 +893,7 @@ export default function CreateContact() {
                         <FaAngleDown className="ml-2 text-gray-400" />
                       </button>
                       {isDropdownassigned_ToDropDown && (
-                        <div className="top-9.9 absolute z-10 w-full rounded-md border border-gray-300 bg-white">
+                        <div className="absolute top-11 z-10 w-full rounded-md border border-gray-300 bg-white">
                           <ul className="py-2 text-sm text-gray-700">
                             {managedBy.map(({ userName, role }, index) => (
                               <li
@@ -721,17 +917,18 @@ export default function CreateContact() {
                 </div>
               </div>
             </div>
-            {/* -------------Address INFORMATION STARTS FROM HERE------------- */}
-            <div className="mx-3 my-3 flex-grow rounded-xl bg-white shadow-md">
+
+            {/* ------------------------------------------------>TAB  2 :  Address Information  TAB <------------------------------------------------ */}
+            <div className="m-3 rounded-xl bg-white shadow-md">
               <h2 className="rounded-t-xl bg-cyan-500 px-4 py-2 font-medium text-white">
                 Address Information
               </h2>
-
-              {/* -------------Address Information STARTS FROM HERE------------- */}
-              {/* -------------6------------- */}
-              {/* -------------Street------------- */}
-              <div className="grid gap-2 p-2">
+              {/* -------------Parent <Address Information Inputs>------------- */}
+              <div className="space-y-3 p-2">
+                {/* ------------------------------------1------------------------------------- */}
+                {/* -------------SUB -> Parent -> <Street && Pincode>------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
+                  {/* -------------Street------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="street"
@@ -743,12 +940,12 @@ export default function CreateContact() {
                       type="text"
                       name="street"
                       value={editLead.street}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter your Street"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
-                  {/* -------------PinCode------------- */}
+                  {/* -------------Pincode------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="pinCode"
@@ -760,15 +957,16 @@ export default function CreateContact() {
                       type="text"
                       name="pinCode"
                       value={editLead.pinCode}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter your pincode"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
                 </div>
-                {/* -------------7------------- */}
-                {/* -------------Country------------- */}
+                {/* ------------------------------------2------------------------------------- */}
+                {/* -------------SUB -> Parent -> <Country && City>------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
+                  {/* -------------Country------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="country"
@@ -780,9 +978,9 @@ export default function CreateContact() {
                       type="text"
                       name="country"
                       value={editLead.country}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
-                      placeholder="Enter your Country Name"
+                      placeholder="Enter your Country name"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
                   {/* -------------City------------- */}
@@ -797,15 +995,17 @@ export default function CreateContact() {
                       type="text"
                       name="city"
                       value={editLead.city}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter your City name"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
                 </div>
-                {/* -------------8------------- */}
-                {/* -------------State------------- */}
+                {/* -------------3------------- */}
+                {/* -------------SUB -> Parent -> <State>------------- */}
+
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
+                  {/* -------------State------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="state"
@@ -817,16 +1017,25 @@ export default function CreateContact() {
                       type="text"
                       name="state"
                       value={editLead.state}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter your State name"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
-                  {/* -------------Description------------- */}
-                </div>{" "}
-                {/* -------------9------------- */}
-                {/* -------------Risk Capcity------------- */}
+                </div>
+              </div>
+            </div>
+            {/* ------------------------------------------------>TAB  3 :  Trading Information TAB <------------------------------------------------ */}
+            <div className="m-3 rounded-xl bg-white shadow-md">
+              <h2 className="rounded-t-xl bg-cyan-500 px-4 py-2 font-medium text-white">
+                Trading Information
+              </h2>
+              {/* -------------Parent <Lead Information Inputs>------------- */}
+              <div className="space-y-3 p-2">
+                {/* ------------------------------------1------------------------------------- */}
+                {/* -------------SUB -> Parent -> <Risk Capacity && Trading Time>------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
+                  {/* -------------Risk Capacity------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="riskCapcity"
@@ -838,9 +1047,9 @@ export default function CreateContact() {
                       type="text"
                       name="riskCapcity"
                       value={editLead.riskCapcity}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter Risk Capacity"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
                   {/* -------------Trading Time------------- */}
@@ -855,15 +1064,16 @@ export default function CreateContact() {
                       type="text"
                       name="tradingTime"
                       value={editLead.tradingTime}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter Trading Time"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
                 </div>
-                {/* -------------10------------- */}
-                {/* -------------Trading Type------------- */}
+                {/* ------------------------------------2------------------------------------- */}
+                {/* -------------SUB -> Parent -> <Trading Type && Investmet>------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
+                  {/* -------------Trading Type------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="tradingType"
@@ -875,30 +1085,31 @@ export default function CreateContact() {
                       type="text"
                       name="tradingType"
                       value={editLead.tradingType}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
-                  {/* -------------investmet------------- */}
+                  {/* -------------Investmet------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="investmet"
                       className="text-sm font-medium text-gray-700"
                     >
-                      Information
+                      Investment
                     </label>
                     <input
                       type="text"
                       name="investmet"
                       value={editLead.investmet}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
                 </div>
-                {/* -------------11------------- */}
-                {/* -------------Advisory Exp------------- */}
+                {/* ------------------------------------2------------------------------------- */}
+                {/* -------------SUB -> Parent -> <Trading Type && Segments>------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
+                  {/* -------------Trading Type------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="empNadvisoryExpame"
@@ -910,11 +1121,34 @@ export default function CreateContact() {
                       type="text"
                       name="advisoryExp"
                       value={editLead.advisoryExp}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter your Advisory"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
+
+                  {/* -------------Trading Years------------- */}
+                  <div className="relative flex flex-col">
+                    <label
+                      htmlFor="tradingYears"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Trading Years
+                    </label>
+                    <input
+                      type="text"
+                      name="tradingYears"
+                      value={editLead.tradingYears}
+                      className="mt-1 rounded-md border border-gray-300 p-2"
+                      onChange={handleChange}
+                      placeholder="Enter years"
+                    />
+                  </div>
+                </div>
+
+                {/* ------------------------------------3------------------------------------- */}
+                {/* -------------SUB -> Parent -> <Trading Years && CallBack DateTime>------------- */}
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
                   {/* -------------Segments------------- */}
                   <div className="relative flex flex-col">
                     <label
@@ -929,9 +1163,9 @@ export default function CreateContact() {
                       onMouseLeave={() => setisDropdownVisibleSegment(false)}
                     >
                       <button
-                        className="mt-1 flex w-full items-center justify-between rounded-md border border-gray-300 p-2"
-                        id="LeadStatusDropDown"
+                        id="segemntDropDown"
                         type="button"
+                        className="mt-1 flex w-full items-center justify-between rounded-md border border-gray-300 p-2"
                       >
                         {defaultTextSegmentDropDown}
                         <FaAngleDown className="ml-2 text-gray-400" />
@@ -939,32 +1173,64 @@ export default function CreateContact() {
                       {isDropdownVisibleSegment && (
                         <div className="absolute top-11 z-10 w-full rounded-md border border-gray-300 bg-white">
                           <ul className="py-2 text-sm text-gray-700">
-                            {segments.map((segment) => (
-                              <li
-                                key={segment.id}
-                                className="flex cursor-pointer items-center border-b px-4 py-2 hover:bg-cyan-500 hover:text-white"
-                              >
-                                <input
-                                  type="checkbox"
-                                  checked={editLead.segments.includes(
-                                    segment.segment,
-                                  )}
-                                  onChange={() => handleCheckboxChange(segment)}
-                                  className="mr-2"
-                                />
-                                {segment.segment}{" "}
-                                {/* Assuming 'segment' is the property you want to display */}
+                            {segments?.length > 0 ? (
+                              segments.map(({ key, segment }) => (
+                                <li
+                                  key={key}
+                                  className="flex cursor-pointer items-center border-b px-4 py-2 hover:bg-cyan-500 hover:text-white"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={editLead.segments?.includes(
+                                      segment,
+                                    )}
+                                    onChange={() =>
+                                      handleCheckboxChange(segment)
+                                    }
+                                    className="mr-2"
+                                  />
+                                  {segment}
+                                </li>
+                              ))
+                            ) : (
+                              <li className="flex items-center gap-1 px-4 py-2 text-center">
+                                <IoInformationCircle
+                                  size={25}
+                                  className="text-cyan-600"
+                                />{" "}
+                                Segments not available. Go to{" "}
+                                <span className="font-bold">
+                                  Settings - Add Segment{" "}
+                                </span>
+                                .
                               </li>
-                            ))}
+                            )}
                           </ul>
                         </div>
                       )}
                     </div>
                   </div>
+
+                  <div className="relative flex flex-col">
+                    <label
+                      htmlFor="callBackDateTime"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      CallBack DateTime
+                    </label>
+                    <input
+                      type="datetime-local"
+                      name="callBackDateTime"
+                      value={editLead.callBackDateTime}
+                      onChange={handleChange}
+                      className="mt-1 rounded-md border border-gray-300 p-2"
+                    />
+                  </div>
                 </div>
-                {/* -------------11------------- */}
-                {/* -------------Trail Start Date------------- */}
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
+                {/* ------------------------------------2------------------------------------- */}
+                {/* -------------SUB -> Parent -> <Trail Start Date && Trail End Date>------------- */}
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 sm:gap-4">
+                  {/* -------------Trail Start Date------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="trialStartDate"
@@ -976,7 +1242,7 @@ export default function CreateContact() {
                       type="date"
                       name="trialStartDate"
                       value={editLead.trialStartDate?.split("T")[0]}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                      className="mt-1 rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                     />
                   </div>
@@ -993,49 +1259,14 @@ export default function CreateContact() {
                       name="trialEndDate"
                       value={editLead.trialEndDate?.split("T")[0]}
                       onChange={handleChange}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                      className="mt-1 rounded-md border border-gray-300 p-2"
                     />
                   </div>
                 </div>
-                {/* -------------12------------- */}
-                {/* -------------Trading Years------------- */}
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
-                  <div className="relative flex flex-col">
-                    <label
-                      htmlFor="tradingYears"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      Trading Years
-                    </label>
-                    <input
-                      type="text"
-                      name="tradingYears"
-                      value={editLead.tradingYears}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
-                      onChange={handleChange}
-                      placeholder="Enter years"
-                    />
-                    {/* -------------callBackDateTime ------------- */}
-                  </div>
-                  <div className="relative flex flex-col">
-                    <label
-                      htmlFor="callBackDateTime"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      CallBack DateTime
-                    </label>
-                    <input
-                      type="datetime-local"
-                      name="callBackDateTime"
-                      value={editLead.callBackDateTime}
-                      onChange={handleChange}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
-                    />
-                  </div>
-                </div>
-                {/* -------------13------------- */}
-                {/* -------------contactID ------------- */}
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
+                {/* ------------------------------------3------------------------------------- */}
+                {/* -------------SUB -> Parent -> <Trading Years && CallBack DateTime>------------- */}
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 sm:gap-4">
+                  {/* -------------Trading Years------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="contactId"
@@ -1047,7 +1278,7 @@ export default function CreateContact() {
                       type="text"
                       name="contactId"
                       value={editLead.contactId}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                      className="mt-1 rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter ContactID"
                     />
@@ -1064,7 +1295,7 @@ export default function CreateContact() {
                       type="text"
                       name="lastModifiedBy"
                       value={editLead.lastModifiedBy}
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                      className="mt-1 rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter details"
                     />
@@ -1072,8 +1303,7 @@ export default function CreateContact() {
                 </div>
               </div>
             </div>
-            {/* DESCRIPTION */}
-            <div className="mx-3 mb-6 rounded-xl bg-white shadow-md">
+            <div className="mx-3 rounded-xl bg-white shadow-md">
               <h2 className="rounded-t-xl bg-cyan-500 px-4 py-2 font-medium text-white">
                 Description Information
               </h2>
@@ -1085,14 +1315,14 @@ export default function CreateContact() {
                   >
                     Description
                   </label>
-                  <ReactQuill
-                    name="description"
-                    value={description}
-                    className="mt-1 h-60 max-h-full hyphens-auto text-balance"
-                    theme="snow"
-                    onChange={setdescription}
-                    placeholder="Add Description"
-                  />
+               
+                      <textarea
+      name="description"
+      value={description}
+      onChange={handleDescriptionChange}
+      placeholder="Add Description"
+      className="mt-1 h-60 max-h-full w-full resize-none text-balance"
+    />
                 </div>
               </div>
               <div className="flex justify-end px-2">

@@ -87,8 +87,8 @@ export default function AccessDevice() {
     return (
       <>
         <ToastContainer />
-        <div className="min-w-screen m-3">
-          <div className="min-w-screen flex flex-wrap items-center justify-between gap-5">
+        <div className="  m-3">
+          <div className="  flex flex-wrap items-center justify-between gap-5">
             <h1 className="text-3xl font-medium">Access Device</h1>
             <button
               onClick={handleAdd}

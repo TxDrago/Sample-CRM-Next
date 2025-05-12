@@ -1,20 +1,19 @@
 "use client";
 
-//react
-import Link from "next/link";
+
 import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 //react
 import { useState, useEffect } from "react";
 //reactIcon
 import { FaAngleDown } from "react-icons/fa";
-//reactPackages
-import { Link, useNavigate, useParams } from "react-router-dom";
+
 
 //external Packages
 import axios from "axios";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+
+ 
 
 //file
 import { getHostnamePart } from "@/components/GlobalHostUrl";
@@ -458,6 +457,12 @@ export default function EditClientSO() {
       language: language,
     }));
   };
+
+    //--------------------------------- Set Description -------------------------
+
+const handleDescriptionChange = (event) => {
+  setdescription(event.target.value);
+};
 
   return (
     <>
@@ -1427,14 +1432,13 @@ export default function EditClientSO() {
                   >
                     Description
                   </label>
-                  <ReactQuill
-                    name="description"
-                    value={description}
-                    className="mt-1 h-60 max-h-full hyphens-auto text-balance"
-                    theme="snow"
-                    onChange={setdescription}
-                    placeholder="Add Description"
-                  />
+                  <textarea
+      name="description"
+      value={description}
+      onChange={handleDescriptionChange}
+      placeholder="Add Description"
+      className="mt-1 h-60 max-h-full w-full resize-none text-balance"
+    />
                 </div>
               </div>
               <div className="flex justify-end px-2">

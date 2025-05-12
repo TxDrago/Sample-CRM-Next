@@ -3,30 +3,23 @@
 //react
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 
 //react
 import { useState, useEffect } from "react";
 //reactIcon
 import { FaAngleDown, FaStarOfLife } from "react-icons/fa";
-import { GrFormNext, GrFormPrevious } from "react-icons/gr";
-
-//reactPackages
-import { Link, useNavigate, useParams } from "react-router-dom";
 
 //external Packages
 import axios from "axios";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+ 
 
 //file
 import { tenant_base_url, protocal_url } from "@/Config/Config";
 import { getHostnamePart } from "@/components/GlobalHostUrl";
 
 import { ToastContainer } from "react-toastify";
-import {
-  showSuccessToast,
-  showErrorToast,
-} from "@/utils/toastNotifications";
+import { showSuccessToast, showErrorToast } from "@/utils/toastNotifications";
 
 //dropDown --->>> Data
 //LanguageDropDown
@@ -41,7 +34,7 @@ import useSegment from "@/Hooks/Segment/useSegment";
 export default function CreateSOContact() {
   //to make id unique
   const { id } = useParams();
- const router = useRouter();
+  const router = useRouter();
 
   // Custom Hook
   const { leadStatus } = useLeadStatus();
@@ -49,13 +42,13 @@ export default function CreateSOContact() {
   const { managedBy } = useManagedBy();
   const { segments } = useSegment();
 
-   //--------------------------------------- Set Business Type --------------------------------------------
-         const [BusinessType, setBusinessType] = useState("");
-          
-         useEffect(() => {
-           const storedType = localStorage.getItem("businessType") || "";
-           setBusinessType(storedType);
-         }, []);
+  //--------------------------------------- Set Business Type --------------------------------------------
+  const [BusinessType, setBusinessType] = useState("");
+
+  useEffect(() => {
+    const storedType = localStorage.getItem("businessType") || "";
+    setBusinessType(storedType);
+  }, []);
 
   //------- Business Type --------
   const businessType = localStorage.getItem("businessType");
@@ -96,7 +89,7 @@ export default function CreateSOContact() {
       };
       const response = await axios.get(
         `${protocal_url}${name}.${tenant_base_url}/Contact/contact/${id}`,
-        config,
+        config
       );
       const data = response.data.data;
 
@@ -139,7 +132,7 @@ export default function CreateSOContact() {
     setdefaultTextSegmentDropDown(
       editLead.segments?.length > 0
         ? editLead.segments.join(", ")
-        : "Select Segment",
+        : "Select Segment"
     );
   }, [editLead]);
 
@@ -161,7 +154,7 @@ export default function CreateSOContact() {
     if (isChecked) {
       // Remove segment if already selected
       updatedSegments = editLead.segments.filter(
-        (selectedSegment) => selectedSegment !== segment,
+        (selectedSegment) => selectedSegment !== segment
       );
     } else {
       // Add segment if not already selected
@@ -175,7 +168,7 @@ export default function CreateSOContact() {
     setdefaultTextSegmentDropDown(
       updatedSegments?.length > 0
         ? updatedSegments.join(", ")
-        : "Select Segment",
+        : "Select Segment"
     );
 
     console.log("Selected segments:", updatedSegments);
@@ -203,10 +196,10 @@ export default function CreateSOContact() {
 
   const handleDropdownassigned_ToDropDown = (
     assigned_To_Username,
-    assigned_To_Role,
+    assigned_To_Role
   ) => {
     setdefaultTextassigned_ToDropDown(
-      assigned_To_Username + " " + assigned_To_Role,
+      assigned_To_Username + " " + assigned_To_Role
     );
     setisDropdownassigned_ToDropDown(!isDropdownassigned_ToDropDown);
     seteditLead((prevTask) => ({
@@ -544,7 +537,7 @@ export default function CreateSOContact() {
       const response = await axios.post(
         `${protocal_url}${name}.${tenant_base_url}/SalesOrder/salesOrder/add`,
         formData_POST,
-        config,
+        config
       );
       if (response.data.isSuccess) {
         showSuccessToast("Sales Order created successfully!");
@@ -555,6 +548,12 @@ export default function CreateSOContact() {
       console.log(error);
       showErrorToast(error.data.message);
     }
+  };
+
+  //--------------------------------- Set Description -------------------------
+
+  const handleDescriptionChange = (event) => {
+    setdescription(event.target.value);
   };
 
   return (
@@ -571,7 +570,7 @@ export default function CreateSOContact() {
           {/* ------------------------------------------------> Cancel Button  <------------------------------------------------ */}
           <div>
             <Link
-              to={`/panel/${BusinessType}/contact`}
+              href={`/panel/${BusinessType}/contact`}
               className="rounded border border-blue-500 px-4 py-1 text-blue-500 sm:px-6"
             >
               Cancel
@@ -727,7 +726,7 @@ export default function CreateSOContact() {
                                   onClick={() =>
                                     handleDropdownassigned_ToDropDown(
                                       userName,
-                                      role,
+                                      role
                                     )
                                   }
                                   className="block cursor-pointer border-b px-4 py-2 hover:bg-cyan-500 hover:text-white"
@@ -919,8 +918,8 @@ export default function CreateSOContact() {
                           {!isEditMode
                             ? defaultTextLanguageDropDown
                             : editLead.language === ""
-                              ? defaultTextLanguageDropDown
-                              : editLead.language}
+                            ? defaultTextLanguageDropDown
+                            : editLead.language}
                           <FaAngleDown className="ml-2 text-gray-400" />
                         </button>
                         {isDropdownVisibleLanguage && (
@@ -1142,7 +1141,7 @@ export default function CreateSOContact() {
                                   onClick={() =>
                                     handleDropdownassigned_ToDropDown(
                                       userName,
-                                      role,
+                                      role
                                     )
                                   }
                                   className="block cursor-pointer border-b px-4 py-2 hover:bg-cyan-500 hover:text-white"
@@ -1308,7 +1307,7 @@ export default function CreateSOContact() {
                                   key={key}
                                   onClick={() =>
                                     handleDropdownisDropdownVisiblebusinessType(
-                                      name,
+                                      name
                                     )
                                   }
                                   className="block cursor-pointer border-b px-4 py-2 hover:bg-cyan-500 hover:text-white"
@@ -1500,7 +1499,7 @@ export default function CreateSOContact() {
                                     <input
                                       type="checkbox"
                                       checked={editLead.segments?.includes(
-                                        segment,
+                                        segment
                                       )}
                                       onChange={() =>
                                         handleCheckboxChange(segment)
@@ -1799,7 +1798,7 @@ export default function CreateSOContact() {
                                     <input
                                       type="checkbox"
                                       checked={editLead.segments?.includes(
-                                        segment,
+                                        segment
                                       )}
                                       onChange={() =>
                                         handleCheckboxChange(segment)
@@ -2071,6 +2070,13 @@ export default function CreateSOContact() {
                     theme="snow"
                     onChange={setdescription}
                     placeholder="Add Description"
+                  />
+                  <textarea
+                    name="description"
+                    value={description}
+                    onChange={handleDescriptionChange}
+                    placeholder="Add Description"
+                    className="mt-1 h-60 max-h-full w-full resize-none text-balance"
                   />
                 </div>
               </div>

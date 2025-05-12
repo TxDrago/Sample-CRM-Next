@@ -4,6 +4,7 @@
 //react
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 //---------------------------//---------------------------//---------------------------//---------------------------
 15 - 10 - 2024;
 //DONT USE//DONT USE//DONT USE//DONT USE//DONT USE//DONT USE//DONT USE//DONT USE
@@ -13,13 +14,11 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 //reactIcon
 import { FaAngleDown } from "react-icons/fa";
-//reactPackages
-import {  useParams } from "react-router-dom";
+
 
 //external Packages
 import axios from "axios";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+ 
 //file
 import { tenant_base_url, protocal_url } from "@/Config/Config";
 import { getHostnamePart } from "@/components/GlobalHostUrl";
@@ -30,7 +29,7 @@ export default function CreateSO() {
   const [business, setBusiness] = useState("");
 
   //to make id unique
-  const { id, leadId } = useParams();
+  const { id } = useParams();
  const router = useRouter();
 
      //--------------------------------------- Set Business Type --------------------------------------------
@@ -535,6 +534,12 @@ export default function CreateSO() {
     }));
   };
 
+    //--------------------------------- Set Description -------------------------
+
+const handleDescriptionChange = (event) => {
+  setdescription(event.target.value);
+};
+
   return (
     <>
       <div className="mt-3 flex min-h-screen flex-col">
@@ -550,7 +555,7 @@ export default function CreateSO() {
           </div>
           <div>
             <Link
-              to={`/panel/${BusinessType}/leads`}
+              href={`/panel/${BusinessType}/leads`}
               className="rounded border border-blue-500 px-6 py-1 text-blue-500"
             >
               Cancel
@@ -1489,14 +1494,13 @@ export default function CreateSO() {
                   >
                     Description
                   </label>
-                  <ReactQuill
-                    name="remarks"
-                    value={description}
-                    className="h-60 max-h-60 max-w-5xl hyphens-auto text-balance"
-                    theme="snow"
-                    onChange={setdescription}
-                    placeholder="Add Description"
-                  />
+                  <textarea
+      name="description"
+      value={description}
+      onChange={handleDescriptionChange}
+      placeholder="Add Description"
+      className="mt-1 h-60 max-h-full w-full resize-none text-balance"
+    />
                 </div>
               </div>
               <div className="mr-10 flex justify-end gap-5">

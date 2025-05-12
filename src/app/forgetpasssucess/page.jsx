@@ -11,7 +11,7 @@ import { GiDiamonds } from "react-icons/gi";
 export default function ForgetPassSuccess() {
   return (
     <>
-      <div className="flex items-center justify-center min-h-screen min-w-screen bg-cyan-500">
+      <div className="flex items-center justify-center min-h-screen   bg-cyan-500">
         <div className="flex flex-col items-center justify-center w-3/4 gap-2 py-6 bg-white rounded-2xl sm:w-2/4">
           <Image
             src="/images/forgetPasswordSuccesfull.png"

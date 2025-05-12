@@ -6,14 +6,12 @@ import { useState, useEffect } from "react";
 import { FaBars } from "react-icons/fa";
 import { MdEdit } from "react-icons/md";
 import { RiDeleteBin6Fill } from "react-icons/ri";
-import { useParams } from "next/navigation";
 import axios from "axios";
 import Switch from "react-switch"; // Import react-switch
 import { tenant_base_url, protocal_url } from "@/Config/Config";
 import Breadcrumb from "../Breadcrumb/Breadcrumb";
 
 export default function BranchTarget() {
-  const { id } = useParams();
   const [active, setActive] = useState(true);
 
   //forImgUpload
@@ -105,10 +103,10 @@ export default function BranchTarget() {
 
   return (
     <>
-      <div className="min-w-screen m-3">
+      <div className="  m-3">
         {active ? (
           <>
-            <div className="min-w-screen flex flex-wrap items-center justify-between gap-5">
+            <div className="  flex flex-wrap items-center justify-between gap-5">
               <h1 className="text-3xl font-medium">NotificationPopup</h1>
               <button
                 onClick={handleActiveState}
@@ -199,7 +197,7 @@ export default function BranchTarget() {
           </>
         ) : (
           <>
-            <div className="min-w-screen flex items-center justify-between">
+            <div className="  flex items-center justify-between">
               <h1 className="text-3xl font-medium">
                 {isEditMode
                   ? "Edit Push Notification Details"

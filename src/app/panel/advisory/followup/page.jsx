@@ -340,10 +340,7 @@ export default function FollowUp() {
                           </div>
                           <AiOutlineEdit
                             className="mr-3 rounded-full bg-cyan-400 p-1 text-white hover:bg-cyan-500"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              router.push(`/panel/${BusinessType}/followup/create_follow_up/${item.id}`);
-                            }}
+                            onClick={() => handleClick(item.id)}
                             size={25}
                           />
                         </div>

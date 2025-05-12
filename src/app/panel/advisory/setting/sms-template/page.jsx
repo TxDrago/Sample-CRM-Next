@@ -173,7 +173,7 @@ export default function SMSTemplate() {
     return (
       <>
         <ToastContainer />
-        <div className="flex items-center justify-between min-w-screen">
+        <div className="flex items-center justify-between  ">
           <h1 className="text-3xl font-medium">
             {isEditMode ? "Edit" : "Add"}
           </h1>
@@ -227,10 +227,10 @@ export default function SMSTemplate() {
   return (
     <>
       <ToastContainer />
-      <div className="m-3 min-w-screen">
+      <div className="m-3  ">
         {active ? (
           <>
-            <div className="flex flex-wrap items-center justify-between gap-5 min-w-screen">
+            <div className="flex flex-wrap items-center justify-between gap-5  ">
               <h1 className="text-3xl font-medium">SMS Template</h1>
               <button
                 onClick={handleAdd}

@@ -157,7 +157,7 @@ export default function CallTemplate() {
 
     return (
       <div>
-        <div className="min-w-screen flex items-center justify-between">
+        <div className="  flex items-center justify-between">
           <h1 className="text-3xl font-medium">
             {isEditMode ? "Edit" : "Add"}
           </h1>
@@ -210,10 +210,10 @@ export default function CallTemplate() {
   };
 
   return (
-    <div className="min-w-screen m-3">
+    <div className="  m-3">
       {active ? (
         <>
-          <div className="min-w-screen flex items-center justify-between">
+          <div className="  flex items-center justify-between">
             <h1 className="text-3xl font-medium">Call Template</h1>
             <button
               onClick={handleAdd}

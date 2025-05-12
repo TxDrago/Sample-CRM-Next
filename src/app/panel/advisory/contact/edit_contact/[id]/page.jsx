@@ -1,35 +1,31 @@
 "use client";
+
 //react
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
+
 import { useState, useEffect } from "react";
+//reactIcon->
+import { FaAngleDown } from "react-icons/fa";
+import { MdOutlineContactPhone } from "react-icons/md";
 
-//reactRoute
-import { Link, useNavigate, useParams } from "react-router-dom";
-
-//reactIcon
-import { FaAngleDown, FaStarOfLife } from "react-icons/fa";
-import { IoInformationCircle } from "react-icons/io5";
-import { GrContactInfo } from "react-icons/gr";
 
 //external Packages
 import axios from "axios";
-import ReactQuill from "react-quill";
-
-//textBox
-import "react-quill/dist/quill.snow.css";
-
-//API-Keywords
+ 
+//file
 import { tenant_base_url, protocal_url } from "@/Config/Config";
+//Images
 import { getHostnamePart } from "@/components/GlobalHostUrl";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "@/utils/toastNotifications";
+import { ToastContainer } from "react-toastify";
 
 //LanguageDropDown
 import languageDropDown from "@/components//dropdown/Languages/languageDropdown";
-
-//-----------------------------ToastContainer-----------------------------
-import { ToastContainer } from "react-toastify";
-import {
-  showSuccessToast,
-  showErrorToast,
-} from "@/utils/toastNotifications";
 
 //dropDown --->>> customHooks
 import useLeadStatus from "@/Hooks/LeadStatus/useLeadStatus";
@@ -37,24 +33,12 @@ import useLeadSource from "@/Hooks/LeadSource/useLeadSource";
 import useManagedBy from "@/Hooks/ManagedBy/useManagedBy";
 import useSegment from "@/Hooks/Segment/useSegment";
 
-export default function Createlead() {
+//------------------------------------------------------------------------------->CODE STARTS FROM HERE<-------------------------------------------------------------------------------
+export default function CreateContact() {
   //to make id unique
   const { id } = useParams();
  const router = useRouter();
-
-  //IMP used as ${name} in an API
   const name = getHostnamePart();
-
-    //--------------------------------------- Set Business Type --------------------------------------------
-             const [BusinessType, setBusinessType] = useState("");
-              
-             useEffect(() => {
-               const storedType = localStorage.getItem("businessType") || "";
-               setBusinessType(storedType);
-             }, []);
-
-  //const bearer_token for API Config
-  const bearer_token = localStorage.getItem("token");
 
   // Custom Hook
   const { leadStatus } = useLeadStatus();
@@ -62,7 +46,16 @@ export default function Createlead() {
   const { managedBy } = useManagedBy();
   const { segments } = useSegment();
 
-  //-->--->createLead/editLead--> Schema<->Model
+   //--------------------------------------- Set Business Type --------------------------------------------
+         const [BusinessType, setBusinessType] = useState("");
+          
+         useEffect(() => {
+           const storedType = localStorage.getItem("businessType") || "";
+           setBusinessType(storedType);
+         }, []);
+
+  //form description is kept-out
+  const [description, setdescription] = useState("Add Text Here");
   const [editLead, seteditLead] = useState({
     id: "",
     name: "",
@@ -94,8 +87,7 @@ export default function Createlead() {
     segments: [],
   });
 
-  //form description is kept-out
-  const [description, setdescription] = useState("Add Text Here");
+  //----------------------------------------------------------------------------------------
 
   //imp to identify mode
   const [isEditMode, setIsEditMode] = useState(false);
@@ -110,6 +102,7 @@ export default function Createlead() {
 
   //GET by ID---------------------------//GET---------------------------//GET---------------------------by ID-----------by ID
   async function handleLead() {
+    const bearer_token = localStorage.getItem("token");
     try {
       const config = {
         headers: {
@@ -117,12 +110,11 @@ export default function Createlead() {
         },
       };
       const response = await axios.get(
-        `${protocal_url}${name}.${tenant_base_url}/Lead/lead/${id}`,
+        `${protocal_url}${name}.${tenant_base_url}/Contact/contact/${id}`,
         config,
       );
       const data = response.data.data;
 
-      //desciption is kept out of model
       setdescription(data.description);
 
       seteditLead({
@@ -131,12 +123,13 @@ export default function Createlead() {
         language: data.language || "",
         company: data.company || "",
         title: data.tital || "",
-        leadSource: data?.leadsSource || "N/A",
-        leadesStatus: data?.leadesStatus || "N/A",
+        leadSource: data.leadsSource || "",
+        leadesStatus: data.leadesStatus || "N/A",
         mobNo: data.mobileNo || "",
         phNo: data.phoneNo || "",
         email: data.email || "",
-        assigned_To: data?.assigned_To || "N/A",
+        assigned_To: data.assigned_To || "N/A",
+        callBackDateTime: data.call_bck_DateTime || "",
         street: data.street || "",
         pinCode: data.postalCode || "",
         country: data.country || "",
@@ -148,60 +141,25 @@ export default function Createlead() {
         investmet: data.investment || "",
         advisoryExp: data.advisaryExp || "",
         segments: data.segments || [],
-        trialStartDate: data.trialStartDate || null,
-        trialEndDate: data.trialEndDate || null,
+        trialStartDate: data.trialStartDate || "",
+        trialEndDate: data.trialEndDate || "",
         tradingYears: data.trading_yrs || "",
-        callBackDateTime: data.call_bck_DateTime || null,
         contactId: data.contactId || "",
         lastModifiedBy: data.lastModifiedBy || "",
       });
     } catch (error) {
-      console.error("Error fetching leads:", error);
+      showErrorToast("Error fetching leads:", error);
     }
   }
 
   //----------------------------------------------------------------------------------------
+  //PooL / Lead Source ToDropDown
+  // const [poolToDropDown, setPoolToDropDown] = useState([]);
 
-  //---------------------------> Language <---------------------------
-  const [defaultTextLanguageDropDown, setDefaultTextLanguageDropDown] =
-    useState("Select Language");
-
-  const [isDropdownVisibleLanguage, setisDropdownVisibleLanguage] =
-    useState(false);
-
-  const toggleDropdownLanguage = () => {
-    setisDropdownVisibleLanguage(!isDropdownVisibleLanguage);
-  };
-
-  const handleDropdownLanguage = (Language) => {
-    setDefaultTextLanguageDropDown(Language);
-    setisDropdownVisibleLanguage(!isDropdownVisibleLanguage);
-    seteditLead((prevTask) => ({
-      ...prevTask,
-      language: Language,
-    }));
-  };
-
-  //----------------------------------------------------------------------------------------
-  //---------------------------> Lead Source <---------------------------
-  //default text for Lead Source
   const [defaultTextPool, setDefaultTextPool] = useState("Select Lead Source");
 
-  //dropDown State
   const [isPoolDropdownOpen, setIsPoolDropdownOpen] = useState(false);
 
-  useEffect(() => {
-    if (editLead?.leadSource) {
-      setDefaultTextPool(editLead.leadSource);
-    } else {
-      setDefaultTextPool("Select Lead Source");
-    }
-  }, [editLead?.leadSource]);
-
-  //error
-  const [error, setError] = useState(null); // New error state
-
-  //
   const [poolEdit, setPoolEdit] = useState("");
 
   const toggleDropdown = () => {
@@ -219,7 +177,7 @@ export default function Createlead() {
   };
 
   //----------------------------------------------------------------------------------------
-  //---------------------------> Lead Status <---------------------------
+  //Lead Status ToDropDown
 
   const [defaultTextLeadStatusDropDown, setdefaultTextLeadStatusDropDown] =
     useState("Select Status");
@@ -239,8 +197,6 @@ export default function Createlead() {
     }));
   };
 
-  //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
   useEffect(() => {
     setdefaultTextSegmentDropDown(
       editLead.segments.length > 0
@@ -259,36 +215,32 @@ export default function Createlead() {
   };
 
   const handleCheckboxChange = (segment) => {
-    const isChecked = editLead.segments.includes(segment);
+    const isChecked = editLead.segments.includes(segment.segment);
 
     let updatedSegments;
     if (isChecked) {
       // Remove segment if already selected
       updatedSegments = editLead.segments.filter(
-        (selectedSegment) => selectedSegment !== segment,
+        (selectedSegment) => selectedSegment !== segment.segment,
       );
     } else {
       // Add segment if not already selected
-      updatedSegments = [...editLead.segments, segment];
+      updatedSegments = [...editLead.segments, segment.segment];
     }
     seteditLead((prev) => ({
       ...prev,
       segments: updatedSegments,
     }));
-
     setdefaultTextSegmentDropDown(
       updatedSegments.length > 0
         ? updatedSegments.join(", ")
         : "Select Segment",
     );
-
     console.log("Selected segments:", updatedSegments);
   };
 
-  //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  //---------------------------> Assigned To <---------------------------
   const [defaultTextassigned_ToDropDown, setdefaultTextassigned_ToDropDown] =
-    useState("Select Managed By");
+    useState("Select Assigned");
   const [isDropdownassigned_ToDropDown, setisDropdownassigned_ToDropDown] =
     useState(false);
 
@@ -333,10 +285,8 @@ export default function Createlead() {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   //---------->handleSubmit<----------
-  //two different schemas, one for PUT and one for POST
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     const bearer_token = localStorage.getItem("token");
 
     try {
@@ -375,142 +325,71 @@ export default function Createlead() {
         call_bck_DateTime: editLead.callBackDateTime || null,
         contactID: editLead.contactId,
         lastModifiedBy: editLead.lastModifiedBy,
-        //----------------//
-        description: description,
-      };
-      const formData_POST = {
-        name: editLead.name,
-        language: editLead.language,
-        company: editLead.company,
-        email: editLead.email,
-        tital: editLead.title,
-        leadsSource: editLead.leadSource,
-        leadesStatus: editLead.leadesStatus,
-        mobileNo: editLead.mobNo,
-        phoneNo: editLead.phNo,
-        assigned_To: editLead.assigned_To,
-        street: editLead.street,
-        postalCode: editLead.pinCode,
-        country: editLead.country,
-        city: editLead.city,
-        state: editLead.state,
-        risk_Capacity: editLead.riskCapcity,
-        tradingTime: editLead.tradingTime,
-        tradingType: editLead.tradingType,
-        investment: editLead.investmet,
-        advisaryExp: editLead.advisoryExp,
-        segments: editLead.segments,
-        trialStartDate: editLead.trialStartDate || null,
-        trialEndDate: editLead.trialEndDate || null,
-        trading_yrs: editLead.tradingYears,
-        call_bck_DateTime: editLead.callBackDateTime || null,
-        contactID: editLead.contactId,
-        lastModifiedBy: editLead.lastModifiedBy,
         description: description,
       };
 
-      console.log(formData_POST);
-
-      //------------------------------------------------------------------------------------> Validations//--> Validations//--> Validations//--> Validations//--> Validations
-
-      if (!formData_POST.name || !formData_PUT.name) {
+      if (!formData_PUT.name) {
         showErrorToast("Please enter name");
         return;
       }
 
-      if (!formData_POST.mobileNo) {
-        showErrorToast("Please enter mobile number");
+      if (!formData_PUT.mobileNo) {
+        showErrorToast("Please enter mobile");
         return;
       }
 
       if (
-        formData_POST.phoneNo &&
-        (formData_POST.phoneNo.length < 9 || formData_PUT.phoneNo.length > 15)
-      ) {
-        showErrorToast("Please check phone no");
-        return;
-      }
-
-      if (
-        formData_POST.mobileNo.length < 9 ||
+        formData_PUT.mobileNo.length < 9 ||
         formData_PUT.mobileNo.length > 15
       ) {
         showErrorToast("Invalid mobile number");
         return;
       }
 
-      if (
-        (formData_POST.email && !emailRegex.test(formData_POST.email)) ||
-        (formData_PUT.email && !emailRegex.test(formData_PUT.email))
-      ) {
+      if (formData_PUT.email && !emailRegex.test(formData_PUT.email)) {
         showErrorToast("Invalid email format");
         return;
       }
 
-      //Date Logic Validation
-      const today = new Date().toISOString().split("T")[0];
-
-      //Previous date cannot be selected
-      if (formData_POST.trialStartDate < today) {
-        showErrorToast("Previous date cannot be selected");
-        return;
-      }
-
-      if (formData_POST.trialEndDate < today) {
-        showErrorToast("Previous date cannot be selected");
-        return;
-      }
-
-      //Date should not be more than 1 or less than 1
-      const date =
-        formData_POST.trialEndDate?.split("-")[2] -
-        formData_POST.trialStartDate?.split("-")[2];
-
-      if (
-        formData_POST.trialStartDate &&
-        formData_POST.trialEndDate &&
-        date === 1
-      ) {
-        if (formData_POST.segments.length === 0) {
-          showErrorToast("Please Select segments");
-          return;
-        }
-      }
-
-      if (formData_POST.trialStartDate && !formData_POST.trialEndDate) {
-        showErrorToast("Please Select trial end date");
-        return;
-      }
-
-      if (formData_POST.trialEndDate && !formData_POST.trialStartDate) {
-        showErrorToast("Please Select trial start date");
-        return;
-      }
-
-      // Check if isEditMode and handle API calls accordingly
       if (isEditMode) {
         await axios.put(
-          `${protocal_url}${name}.${tenant_base_url}/Lead/lead/update`,
+          `${protocal_url}${name}.${tenant_base_url}/Contact/contact/update`,
           formData_PUT,
           config,
         );
-        alert("Lead updated successfully!");
-        showSuccessToast("Lead updated successfully!");
-        router.push(`/panel/${BusinessType}/leads`);
-      } else {
-        await axios.post(
-          `${protocal_url}${name}.${tenant_base_url}/Lead/lead/add`,
-          formData_POST,
-          config,
-        );
-        alert("Lead created successfully!");
-        showSuccessToast("Lead created successfully");
-        router.push(`/panel/${BusinessType}/leads`);
+        showSuccessToast("Contact updated successfully!");
+        router.push(`/panel/${BusinessType}/contact`);
       }
     } catch (error) {
-      showErrorToast(error.response?.data?.message || "An error occurred");
+      showErrorToast("An error occurred. Please try again.", error);
     }
   };
+
+  //----------------------------------------------------------------------------------------
+  //LanguageDropDown
+  const [defaultTextLanguageDropDown, setDefaultTextLanguageDropDown] =
+    useState("Select Language");
+  const [isDropdownVisibleLanguage, setisDropdownVisibleLanguage] =
+    useState(false);
+
+  const toggleDropdownLanguage = () => {
+    setisDropdownVisibleLanguage(!isDropdownVisibleLanguage);
+  };
+
+  const handleDropdownLanguage = (language) => {
+    setDefaultTextLanguageDropDown(language);
+    setisDropdownVisibleLanguage(false);
+    seteditLead((prevTask) => ({
+      ...prevTask,
+      language: language,
+    }));
+  };
+
+  //--------------------------------- Set Description -------------------------
+
+const handleDescriptionChange = (event) => {
+  setdescription(event.target.value);
+};
 
   return (
     <>
@@ -521,29 +400,17 @@ export default function Createlead() {
         <div className="mx-3 flex justify-between rounded border bg-white p-3">
           {/* ------------------------------------------------> Text and Logo  <------------------------------------------------ */}
           <div className="flex items-center justify-center gap-3">
+            <MdOutlineContactPhone size={25} />
             <h1 className="text-xl">
-              {isEditMode ? (
-                <>
-                  <div className="flex items-center justify-center gap-2">
-                    <GrContactInfo size={25} />
-                    <h1>Edit Lead</h1>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="flex items-center justify-center gap-2">
-                    <GrContactInfo size={25} />
-                    <h1>Create Lead</h1>
-                  </div>
-                </>
-              )}
+              <h1>Edit Contact</h1>
             </h1>
           </div>
+
+          {/* ------------------------------------------------> Cancel Button  <------------------------------------------------ */}
           <div>
-            {/* ------------------------------------------------> Cancel Button  <------------------------------------------------ */}
             <Link
-              to={`/panel/${BusinessType}/leads`}
-              className="rounded border border-blue-500 px-4 py-1 text-blue-500 sm:px-6"
+              href={`/panel/${BusinessType}/contact`}
+              className="mx-3 rounded border border-blue-500 px-4 py-1 text-blue-500"
             >
               Cancel
             </Link>
@@ -552,17 +419,21 @@ export default function Createlead() {
 
         {/* -------------FORM Starts FROM HERE------------- */}
         <form onSubmit={handleSubmit} className="mb-6 flex">
-          {/* ------------------------------------------------> FORM PARENT includes 4 tabs <------------------------------------------------ */}
+          {/* ------------------------------------------------> FORM PARENT includes 3 tabs <------------------------------------------------ */}
+
+          {/*Parent Div */}
           <div className="w-screen">
-            {/* ------------------------------------------------>TAB  1 :  Lead Information TAB <------------------------------------------------ */}
+            {/*CHILD Div------ Image Input */}
+
             <div className="m-3 rounded-xl bg-white shadow-md">
               <h2 className="rounded-t-xl bg-cyan-500 px-4 py-2 font-medium text-white">
-                Lead Information
+                Contact Details
               </h2>
-              {/* -------------Parent <Lead Information Inputs>------------- */}
+
+              {/* -------------CONTACT INFORMATION STARTS FROM HERE------------- */}
               <div className="space-y-3 p-2">
-                {/* ------------------------------------1------------------------------------- */}
-                {/* -------------SUB -> Parent -> <Name && Language>------------- */}
+                {/*CHILD Div------ Image Input */}
+                {/* -------------1------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
                   {/* -------------Name------------- */}
                   <div className="relative flex flex-col">
@@ -570,17 +441,13 @@ export default function Createlead() {
                       htmlFor="name"
                       className="text-sm font-medium text-gray-700"
                     >
-                      <span className="flex gap-1">
-                        Name
-                        <FaStarOfLife size={8} className="text-red-500" />
-                      </span>
+                      Name
                     </label>
                     <input
                       type="text"
                       name="name"
                       value={editLead.name}
                       onChange={handleChange}
-                      placeholder="Enter your Name"
                       className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
@@ -592,7 +459,6 @@ export default function Createlead() {
                     >
                       Language
                     </label>
-
                     <div
                       className="relative"
                       onClick={toggleDropdownLanguage}
@@ -628,11 +494,9 @@ export default function Createlead() {
                     </div>
                   </div>
                 </div>
-
-                {/* ------------------------------------2------------------------------------- */}
-                {/* -------------SUB -> Parent -> < Company &&  Title >------------- */}
+                {/* -------------2------------- */}
+                {/* -------------Company------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
-                  {/* -------------Company------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="company"
@@ -644,9 +508,9 @@ export default function Createlead() {
                       type="text"
                       name="company"
                       value={editLead.company}
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter your Company"
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
                   {/* -------------Title------------- */}
@@ -655,22 +519,21 @@ export default function Createlead() {
                       htmlFor="title"
                       className="text-sm font-medium text-gray-700"
                     >
-                      Lead Title
+                      Title
                     </label>
                     <input
                       type="text"
                       name="title"
                       value={editLead.title}
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter Title"
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
                 </div>
-                {/* ------------------------------------3------------------------------------- */}
-                {/* -------------SUB -> Parent -> <Lead Source && Lead Status>------------- */}
+                {/* -------------3------------- */}
+                {/* -------------Lead Source------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
-                  {/* -------------Lead Source------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="Pool"
@@ -695,44 +558,25 @@ export default function Createlead() {
                       </button>
                       {isPoolDropdownOpen && (
                         <div className="absolute top-11 z-10 w-full rounded-md border border-gray-300 bg-white">
-                          {error ? (
-                            <div className="py-2 text-red-600">{error}</div>
-                          ) : (
-                            <ul className="py-2 text-sm text-gray-700">
-                              {leadSource.length > 0 ? (
-                                leadSource.map(({ key, poolName }) => (
-                                  <li
-                                    key={key}
-                                    onClick={() =>
-                                      handleDropdownSelection(poolName)
-                                    }
-                                    className="block cursor-pointer border-b px-4 py-2 hover:bg-cyan-500 hover:text-white"
-                                  >
-                                    {poolName}
-                                  </li>
-                                ))
-                              ) : (
-                                <li className="flex items-center gap-1 px-4 py-2 text-center">
-                                  <IoInformationCircle
-                                    size={25}
-                                    className="text-cyan-600"
-                                  />{" "}
-                                  Lead status not available. Go to{" "}
-                                  <span className="font-bold">
-                                    Settings - Add Pool{" "}
-                                  </span>
-                                  .
-                                </li>
-                              )}
-                            </ul>
-                          )}
+                          <ul className="py-2 text-sm text-gray-700">
+                            {leadSource.map(({ id, poolName }) => (
+                              <li
+                                key={id}
+                                onClick={() =>
+                                  handleDropdownSelection(poolName)
+                                }
+                                className="block cursor-pointer border-b px-4 py-2 hover:bg-cyan-500 hover:text-white"
+                              >
+                                {poolName}
+                              </li>
+                            ))}
+                          </ul>
                         </div>
                       )}
                     </div>
                   </div>
 
                   {/* -------------Lead Status------------- */}
-
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="leadesStatus"
@@ -758,31 +602,15 @@ export default function Createlead() {
                       {isDropdownVisibleLeadStatus && (
                         <div className="top-10.5 absolute z-10 w-full rounded-md border border-gray-300 bg-white">
                           <ul className="py-2 text-sm text-gray-700">
-                            {leadStatus.length > 0 ? (
-                              leadStatus.map(({ key, status }) => (
-                                <li
-                                  key={key}
-                                  onClick={() =>
-                                    handleDropdownLeadStatus(status)
-                                  }
-                                  className="block cursor-pointer border-b px-4 py-2 hover:bg-cyan-500 hover:text-white"
-                                >
-                                  {status}
-                                </li>
-                              ))
-                            ) : (
-                              <li className="flex items-center gap-1 px-4 py-2 text-center">
-                                <IoInformationCircle
-                                  size={25}
-                                  className="text-cyan-600"
-                                />{" "}
-                                Lead status not available. Go to{" "}
-                                <span className="font-bold">
-                                  Settings - Add Lead Status{" "}
-                                </span>
-                                .
+                            {leadStatus.map(({ key, status }) => (
+                              <li
+                                key={key}
+                                onClick={() => handleDropdownLeadStatus(status)}
+                                className="block cursor-pointer border-b px-4 py-2 hover:bg-cyan-500 hover:text-white"
+                              >
+                                {status}
                               </li>
-                            )}
+                            ))}
                           </ul>
                         </div>
                       )}
@@ -790,26 +618,22 @@ export default function Createlead() {
                   </div>
                 </div>
 
-                {/* ------------------------------------4------------------------------------- */}
-                {/* -------------SUB -> Parent -> <Mobile Numbe && Alternate Number>------------- */}
+                {/* -------------4------------- */}
+                {/* -------------Mobile Number------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
-                  {/* -------------Mobile Number------------- */}
                   <div className="relative flex flex-col">
                     <label
-                      htmlFor="email"
+                      htmlFor="mobNo"
                       className="text-sm font-medium text-gray-700"
                     >
-                      <span className="flex gap-1">
-                        Mobile Number
-                        <FaStarOfLife size={8} className="text-red-500" />
-                      </span>
+                      Mobile Number
                     </label>
                     <input
-                      type="number"
+                      type="text"
                       name="mobNo"
-                      maxLength="15"
                       value={editLead.mobNo}
-                      className="mt-1 rounded-md border border-gray-300 p-2"
+                      maxLength="15"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleContactChange}
                       placeholder="Enter your Mobile Number"
                     />
@@ -825,27 +649,20 @@ export default function Createlead() {
                     <input
                       type="text"
                       name="phNo"
-                      maxLength="15"
                       value={editLead.phNo}
-                      className="mt-1 rounded-md border border-gray-300 p-2"
+                      maxLength="15"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleContactChange}
                       placeholder="Enter your Alternate Number"
-                      onInput={(e) => {
-                        e.target.value = e.target.value.replace(
-                          /[a-zA-Z]/g,
-                          "",
-                        ); // Removes all letters (a to z and A to Z)
-                      }}
                     />
                   </div>
                 </div>
-                {/* ------------------------------------5------------------------------------- */}
-                {/* -------------SUB -> Parent -> <Email && Assigned TO>------------- */}
+                {/* -------------5------------- */}
+                {/* -------------Email------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
-                  {/* -------------Email------------- */}
                   <div className="relative flex flex-col">
                     <label
-                      htmlFor="city"
+                      htmlFor="email"
                       className="text-sm font-medium text-gray-700"
                     >
                       Email
@@ -854,12 +671,12 @@ export default function Createlead() {
                       type="email"
                       name="email"
                       value={editLead.email}
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter your Email"
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
-                  {/* -------------Managed by------------- */}
+                  {/* -------------Assigned to------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="leadesStatus"
@@ -885,7 +702,7 @@ export default function Createlead() {
                         <FaAngleDown className="ml-2 text-gray-400" />
                       </button>
                       {isDropdownassigned_ToDropDown && (
-                        <div className="absolute top-11 z-10 w-full rounded-md border border-gray-300 bg-white">
+                        <div className="top-9.9 absolute z-10 w-full rounded-md border border-gray-300 bg-white">
                           <ul className="py-2 text-sm text-gray-700">
                             {managedBy.map(({ userName, role }, index) => (
                               <li
@@ -909,18 +726,17 @@ export default function Createlead() {
                 </div>
               </div>
             </div>
-
-            {/* ------------------------------------------------>TAB  2 :  Address Information  TAB <------------------------------------------------ */}
-            <div className="m-3 rounded-xl bg-white shadow-md">
+            {/* -------------Address INFORMATION STARTS FROM HERE------------- */}
+            <div className="mx-3 my-3 flex-grow rounded-xl bg-white shadow-md">
               <h2 className="rounded-t-xl bg-cyan-500 px-4 py-2 font-medium text-white">
                 Address Information
               </h2>
-              {/* -------------Parent <Address Information Inputs>------------- */}
-              <div className="space-y-3 p-2">
-                {/* ------------------------------------1------------------------------------- */}
-                {/* -------------SUB -> Parent -> <Street && Pincode>------------- */}
+
+              {/* -------------Address Information STARTS FROM HERE------------- */}
+              {/* -------------6------------- */}
+              {/* -------------Street------------- */}
+              <div className="grid gap-2 p-2">
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
-                  {/* -------------Street------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="street"
@@ -932,12 +748,12 @@ export default function Createlead() {
                       type="text"
                       name="street"
                       value={editLead.street}
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter your Street"
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
-                  {/* -------------Pincode------------- */}
+                  {/* -------------PinCode------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="pinCode"
@@ -949,16 +765,15 @@ export default function Createlead() {
                       type="text"
                       name="pinCode"
                       value={editLead.pinCode}
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter your pincode"
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
                 </div>
-                {/* ------------------------------------2------------------------------------- */}
-                {/* -------------SUB -> Parent -> <Country && City>------------- */}
+                {/* -------------7------------- */}
+                {/* -------------Country------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
-                  {/* -------------Country------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="country"
@@ -970,9 +785,9 @@ export default function Createlead() {
                       type="text"
                       name="country"
                       value={editLead.country}
-                      onChange={handleChange}
-                      placeholder="Enter your Country name"
                       className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                      onChange={handleChange}
+                      placeholder="Enter your Country Name"
                     />
                   </div>
                   {/* -------------City------------- */}
@@ -987,17 +802,15 @@ export default function Createlead() {
                       type="text"
                       name="city"
                       value={editLead.city}
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter your City name"
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
                 </div>
-                {/* -------------3------------- */}
-                {/* -------------SUB -> Parent -> <State>------------- */}
-
+                {/* -------------8------------- */}
+                {/* -------------State------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
-                  {/* -------------State------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="state"
@@ -1009,25 +822,16 @@ export default function Createlead() {
                       type="text"
                       name="state"
                       value={editLead.state}
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter your State name"
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
-                </div>
-              </div>
-            </div>
-            {/* ------------------------------------------------>TAB  3 :  Trading Information TAB <------------------------------------------------ */}
-            <div className="m-3 rounded-xl bg-white shadow-md">
-              <h2 className="rounded-t-xl bg-cyan-500 px-4 py-2 font-medium text-white">
-                Trading Information
-              </h2>
-              {/* -------------Parent <Lead Information Inputs>------------- */}
-              <div className="space-y-3 p-2">
-                {/* ------------------------------------1------------------------------------- */}
-                {/* -------------SUB -> Parent -> <Risk Capacity && Trading Time>------------- */}
+                  {/* -------------Description------------- */}
+                </div>{" "}
+                {/* -------------9------------- */}
+                {/* -------------Risk Capcity------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
-                  {/* -------------Risk Capacity------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="riskCapcity"
@@ -1039,9 +843,9 @@ export default function Createlead() {
                       type="text"
                       name="riskCapcity"
                       value={editLead.riskCapcity}
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter Risk Capacity"
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
                   {/* -------------Trading Time------------- */}
@@ -1056,16 +860,15 @@ export default function Createlead() {
                       type="text"
                       name="tradingTime"
                       value={editLead.tradingTime}
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter Trading Time"
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
                 </div>
-                {/* ------------------------------------2------------------------------------- */}
-                {/* -------------SUB -> Parent -> <Trading Type && Investmet>------------- */}
+                {/* -------------10------------- */}
+                {/* -------------Trading Type------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
-                  {/* -------------Trading Type------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="tradingType"
@@ -1077,31 +880,30 @@ export default function Createlead() {
                       type="text"
                       name="tradingType"
                       value={editLead.tradingType}
-                      onChange={handleChange}
                       className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                      onChange={handleChange}
                     />
                   </div>
-                  {/* -------------Investmet------------- */}
+                  {/* -------------investmet------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="investmet"
                       className="text-sm font-medium text-gray-700"
                     >
-                      Investment
+                      Information
                     </label>
                     <input
                       type="text"
                       name="investmet"
                       value={editLead.investmet}
-                      onChange={handleChange}
                       className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
-                {/* ------------------------------------2------------------------------------- */}
-                {/* -------------SUB -> Parent -> <Trading Type && Segments>------------- */}
+                {/* -------------11------------- */}
+                {/* -------------Advisory Exp------------- */}
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
-                  {/* -------------Trading Type------------- */}
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="empNadvisoryExpame"
@@ -1113,34 +915,11 @@ export default function Createlead() {
                       type="text"
                       name="advisoryExp"
                       value={editLead.advisoryExp}
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter your Advisory"
-                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
-
-                  {/* -------------Trading Years------------- */}
-                  <div className="relative flex flex-col">
-                    <label
-                      htmlFor="tradingYears"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      Trading Years
-                    </label>
-                    <input
-                      type="text"
-                      name="tradingYears"
-                      value={editLead.tradingYears}
-                      className="mt-1 rounded-md border border-gray-300 p-2"
-                      onChange={handleChange}
-                      placeholder="Enter years"
-                    />
-                  </div>
-                </div>
-
-                {/* ------------------------------------3------------------------------------- */}
-                {/* -------------SUB -> Parent -> <Trading Years && CallBack DateTime>------------- */}
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
                   {/* -------------Segments------------- */}
                   <div className="relative flex flex-col">
                     <label
@@ -1155,9 +934,9 @@ export default function Createlead() {
                       onMouseLeave={() => setisDropdownVisibleSegment(false)}
                     >
                       <button
-                        id="segemntDropDown"
-                        type="button"
                         className="mt-1 flex w-full items-center justify-between rounded-md border border-gray-300 p-2"
+                        id="LeadStatusDropDown"
+                        type="button"
                       >
                         {defaultTextSegmentDropDown}
                         <FaAngleDown className="ml-2 text-gray-400" />
@@ -1165,64 +944,32 @@ export default function Createlead() {
                       {isDropdownVisibleSegment && (
                         <div className="absolute top-11 z-10 w-full rounded-md border border-gray-300 bg-white">
                           <ul className="py-2 text-sm text-gray-700">
-                            {segments?.length > 0 ? (
-                              segments.map(({ key, segment }) => (
-                                <li
-                                  key={key}
-                                  className="flex cursor-pointer items-center border-b px-4 py-2 hover:bg-cyan-500 hover:text-white"
-                                >
-                                  <input
-                                    type="checkbox"
-                                    checked={editLead.segments?.includes(
-                                      segment,
-                                    )}
-                                    onChange={() =>
-                                      handleCheckboxChange(segment)
-                                    }
-                                    className="mr-2"
-                                  />
-                                  {segment}
-                                </li>
-                              ))
-                            ) : (
-                              <li className="flex items-center gap-1 px-4 py-2 text-center">
-                                <IoInformationCircle
-                                  size={25}
-                                  className="text-cyan-600"
-                                />{" "}
-                                Segments not available. Go to{" "}
-                                <span className="font-bold">
-                                  Settings - Add Segment{" "}
-                                </span>
-                                .
+                            {segments.map((segment) => (
+                              <li
+                                key={segment.id}
+                                className="flex cursor-pointer items-center border-b px-4 py-2 hover:bg-cyan-500 hover:text-white"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={editLead.segments.includes(
+                                    segment.segment,
+                                  )}
+                                  onChange={() => handleCheckboxChange(segment)}
+                                  className="mr-2"
+                                />
+                                {segment.segment}{" "}
+                                {/* Assuming 'segment' is the property you want to display */}
                               </li>
-                            )}
+                            ))}
                           </ul>
                         </div>
                       )}
                     </div>
                   </div>
-
-                  <div className="relative flex flex-col">
-                    <label
-                      htmlFor="callBackDateTime"
-                      className="text-sm font-medium text-gray-700"
-                    >
-                      CallBack DateTime
-                    </label>
-                    <input
-                      type="datetime-local"
-                      name="callBackDateTime"
-                      value={editLead.callBackDateTime}
-                      onChange={handleChange}
-                      className="mt-1 rounded-md border border-gray-300 p-2"
-                    />
-                  </div>
                 </div>
-                {/* ------------------------------------2------------------------------------- */}
-                {/* -------------SUB -> Parent -> <Trail Start Date && Trail End Date>------------- */}
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 sm:gap-4">
-                  {/* -------------Trail Start Date------------- */}
+                {/* -------------11------------- */}
+                {/* -------------Trail Start Date------------- */}
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="trialStartDate"
@@ -1234,7 +981,7 @@ export default function Createlead() {
                       type="date"
                       name="trialStartDate"
                       value={editLead.trialStartDate?.split("T")[0]}
-                      className="mt-1 rounded-md border border-gray-300 p-2"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                     />
                   </div>
@@ -1251,14 +998,49 @@ export default function Createlead() {
                       name="trialEndDate"
                       value={editLead.trialEndDate?.split("T")[0]}
                       onChange={handleChange}
-                      className="mt-1 rounded-md border border-gray-300 p-2"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                     />
                   </div>
                 </div>
-                {/* ------------------------------------3------------------------------------- */}
-                {/* -------------SUB -> Parent -> <Trading Years && CallBack DateTime>------------- */}
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-2 sm:gap-4">
-                  {/* -------------Trading Years------------- */}
+                {/* -------------12------------- */}
+                {/* -------------Trading Years------------- */}
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
+                  <div className="relative flex flex-col">
+                    <label
+                      htmlFor="tradingYears"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      Trading Years
+                    </label>
+                    <input
+                      type="text"
+                      name="tradingYears"
+                      value={editLead.tradingYears}
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                      onChange={handleChange}
+                      placeholder="Enter years"
+                    />
+                    {/* -------------callBackDateTime ------------- */}
+                  </div>
+                  <div className="relative flex flex-col">
+                    <label
+                      htmlFor="callBackDateTime"
+                      className="text-sm font-medium text-gray-700"
+                    >
+                      CallBack DateTime
+                    </label>
+                    <input
+                      type="datetime-local"
+                      name="callBackDateTime"
+                      value={editLead.callBackDateTime}
+                      onChange={handleChange}
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
+                    />
+                  </div>
+                </div>
+                {/* -------------13------------- */}
+                {/* -------------contactID ------------- */}
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-4">
                   <div className="relative flex flex-col">
                     <label
                       htmlFor="contactId"
@@ -1270,7 +1052,7 @@ export default function Createlead() {
                       type="text"
                       name="contactId"
                       value={editLead.contactId}
-                      className="mt-1 rounded-md border border-gray-300 p-2"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter ContactID"
                     />
@@ -1287,7 +1069,7 @@ export default function Createlead() {
                       type="text"
                       name="lastModifiedBy"
                       value={editLead.lastModifiedBy}
-                      className="mt-1 rounded-md border border-gray-300 p-2"
+                      className="mt-1 w-full rounded-md border border-gray-300 p-2"
                       onChange={handleChange}
                       placeholder="Enter details"
                     />
@@ -1295,7 +1077,8 @@ export default function Createlead() {
                 </div>
               </div>
             </div>
-            <div className="mx-3 rounded-xl bg-white shadow-md">
+            {/* DESCRIPTION */}
+            <div className="mx-3 mb-6 rounded-xl bg-white shadow-md">
               <h2 className="rounded-t-xl bg-cyan-500 px-4 py-2 font-medium text-white">
                 Description Information
               </h2>
@@ -1307,14 +1090,14 @@ export default function Createlead() {
                   >
                     Description
                   </label>
-                  <ReactQuill
-                    name="description"
-                    value={description}
-                    className="mt-1 h-40 max-h-full hyphens-auto text-balance sm:h-60"
-                    theme="snow"
-                    onChange={setdescription}
-                    placeholder="Add Description"
-                  />
+                
+                      <textarea
+      name="description"
+      value={description}
+      onChange={handleDescriptionChange}
+      placeholder="Add Description"
+      className="mt-1 h-60 max-h-full w-full resize-none text-balance"
+    />
                 </div>
               </div>
               <div className="flex justify-end px-2">

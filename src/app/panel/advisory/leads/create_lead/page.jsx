@@ -1,10 +1,9 @@
 "use client";
 //react
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import { useState, useEffect } from "react";
-
-//reactRoute
-import { Link, useNavigate, useParams } from "react-router-dom";
-
 //reactIcon
 import { FaAngleDown, FaStarOfLife } from "react-icons/fa";
 import { IoInformationCircle } from "react-icons/io5";
@@ -12,10 +11,10 @@ import { GrContactInfo } from "react-icons/gr";
 
 //external Packages
 import axios from "axios";
-import ReactQuill from "react-quill";
+
 
 //textBox
-import "react-quill/dist/quill.snow.css";
+ 
 
 //API-Keywords
 import { tenant_base_url, protocal_url } from "@/Config/Config";
@@ -38,8 +37,7 @@ import useManagedBy from "@/Hooks/ManagedBy/useManagedBy";
 import useSegment from "@/Hooks/Segment/useSegment";
 
 export default function Createlead() {
-  //to make id unique
-  const { id } = useParams();
+
  const router = useRouter();
 
   //IMP used as ${name} in an API
@@ -512,6 +510,12 @@ export default function Createlead() {
     }
   };
 
+    //--------------------------------- Set Description -------------------------
+
+const handleDescriptionChange = (event) => {
+  setdescription(event.target.value);
+};
+
   return (
     <>
       <ToastContainer />
@@ -542,7 +546,7 @@ export default function Createlead() {
           <div>
             {/* ------------------------------------------------> Cancel Button  <------------------------------------------------ */}
             <Link
-              to={`/panel/${BusinessType}/leads`}
+              href={`/panel/${BusinessType}/leads`}
               className="rounded border border-blue-500 px-4 py-1 text-blue-500 sm:px-6"
             >
               Cancel
@@ -1307,14 +1311,14 @@ export default function Createlead() {
                   >
                     Description
                   </label>
-                  <ReactQuill
-                    name="description"
-                    value={description}
-                    className="mt-1 h-40 max-h-full hyphens-auto text-balance sm:h-60"
-                    theme="snow"
-                    onChange={setdescription}
-                    placeholder="Add Description"
-                  />
+              
+                      <textarea
+      name="description"
+      value={description}
+      onChange={handleDescriptionChange}
+      placeholder="Add Description"
+      className="mt-1 h-60 max-h-full w-full resize-none text-balance"
+    />
                 </div>
               </div>
               <div className="flex justify-end px-2">

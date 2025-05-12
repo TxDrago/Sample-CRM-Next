@@ -3,21 +3,20 @@
 //react
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 //react
 import { useState, useEffect } from "react";
 
 //reactIcon
 import { FaAngleDown } from "react-icons/fa";
 
-//reactPackages
-import { useParams } from "next/navigation";
 
 //external Packages
 import axios from "axios";
-import ReactQuill from "react-quill";
+
 
 //textBox
-import "react-quill/dist/quill.snow.css";
+ 
 
 //API-Keywords
 import { tenant_base_url, protocal_url } from "@/Config/Config";
@@ -282,6 +281,12 @@ export default function CreateTrial() {
     }));
   };
 
+  //--------------------------------- Set Description -------------------------
+
+  const handleDescriptionChange = (event) => {
+    setdescription(event.target.value);
+  };
+
   return (
     <>
       <ToastContainer />
@@ -296,7 +301,7 @@ export default function CreateTrial() {
           <div>
             {/* ------------------------------------------------> Cancel Button  <------------------------------------------------ */}
             <Link
-              to={`/panel/${BusinessType}/freeTrail`}
+              href={`/panel/${BusinessType}/freeTrail`}
               className="rounded border border-blue-500 px-4 py-1 text-blue-500 sm:px-6"
             >
               Cancel
@@ -663,14 +668,14 @@ export default function CreateTrial() {
                   >
                     Description
                   </label>
-                  <ReactQuill
-                    name="description"
-                    value={description}
-                    className="mt-1 h-60 max-h-full hyphens-auto text-balance"
-                    theme="snow"
-                    onChange={setdescription}
-                    placeholder="Add Description"
-                  />
+                    <textarea
+      name="description"
+      value={description}
+      onChange={handleDescriptionChange}
+      placeholder="Add Description"
+      className="mt-1 h-60 max-h-full w-full resize-none text-balance"
+    />
+                  
                 </div>
               </div>
               <div className="flex justify-end px-2">

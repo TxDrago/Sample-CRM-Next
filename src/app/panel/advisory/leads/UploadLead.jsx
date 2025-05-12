@@ -1,4 +1,6 @@
 "use client";
+
+import Link from "next/link";
 //------------------------------------------no use------------------------------------------
 //react
 import { useState,useEffect } from "react";
@@ -6,8 +8,6 @@ import { useState,useEffect } from "react";
 //reactIcon
 import { FaAngleDown } from "react-icons/fa";
 
-//reactRoute
-import { Link } from "react-router-dom";
 
 //dropDown --->>> customHooks
 import useManagedBy from "@/Hooks/ManagedBy/useManagedBy";
@@ -133,7 +133,7 @@ export default function UploadLead() {
         </h1>
         <div>
           <Link
-            to={`/panel/${BusinessType}/leads`}
+            href={`/panel/${BusinessType}/leads`}
             className="mx-3 rounded border border-blue-500 px-4 py-1 text-blue-500"
           >
             Cancel
