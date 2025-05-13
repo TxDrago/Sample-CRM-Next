@@ -5,6 +5,8 @@ import Link from "next/link";
 
 import Image from "next/image";
 
+//
+
 import { GiDiamonds } from "react-icons/gi";
 
 
