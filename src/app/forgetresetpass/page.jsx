@@ -30,9 +30,11 @@ export default function ForgetResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordEye, setPasswordEye] = useState(false);
 
+  const [fullURL, setFullURL] = useState("");
+
    useEffect(() => {
     if (typeof window !== "undefined") {
-      const fullURL = window.location.href;
+  setFullURL(window.location.href);
     }
   }, []);
 
