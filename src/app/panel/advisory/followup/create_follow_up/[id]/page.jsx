@@ -44,7 +44,7 @@ const CreateFollowUp = () => {
     leadesStatus: "",
   });
 
-  const [description, setDescription] = useState(""); // For Quill editor
+  const [description, setDescription] = useState(""); 
 
   // Fetch Data by ID
   useEffect(() => {
@@ -81,7 +81,7 @@ const CreateFollowUp = () => {
           lastModifiedBy: followup.lastModifiedBy || "",
           leadesStatus: followup.leadesStatus || "",
         });
-        // Set description in Quill editor
+        
         setDescription(followup.description || "");
       }
     } catch (error) {

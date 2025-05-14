@@ -2063,14 +2063,7 @@ export default function CreateSOContact() {
                   >
                     Description
                   </label>
-                  <ReactQuill
-                    name="remarks"
-                    value={description}
-                    className="h-60 max-h-60 hyphens-auto text-balance"
-                    theme="snow"
-                    onChange={setdescription}
-                    placeholder="Add Description"
-                  />
+                
                   <textarea
                     name="description"
                     value={description}
