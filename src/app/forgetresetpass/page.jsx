@@ -30,16 +30,18 @@ export default function ForgetResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordEye, setPasswordEye] = useState(false);
 
-  const [fullURL, setFullURL] = useState("");
+ const [fullURL, setFullURL] = useState("");
+const [subdomain, setSubdomain] = useState("");
 
-   useEffect(() => {
-    if (typeof window !== "undefined") {
-  setFullURL(window.location.href);
-    }
-  }, []);
+useEffect(() => {
+  if (typeof window !== "undefined") {
+    const url = new URL(window.location.href);
+    setFullURL(url.href);
 
-  const url = new URL(fullURL);
-  const subdomain = url.hostname.split(".")[0];
+    const domainParts = url.hostname.split(".");
+    setSubdomain(domainParts[0]);
+  }
+}, []);
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("myData_forget");
