@@ -30,7 +30,12 @@ export default function ForgetResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordEye, setPasswordEye] = useState(false);
 
-  const fullURL = window.location.href;
+   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const fullURL = window.location.href;
+    }
+  }, []);
+
   const url = new URL(fullURL);
   const subdomain = url.hostname.split(".")[0];
 
